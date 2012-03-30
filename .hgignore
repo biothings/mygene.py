@@ -3,7 +3,8 @@ syntax: glob
 
 *.pyc
 *.bak
-tests
+dist
+build
 
 # switch to regexp syntax.
 syntax: regexp
