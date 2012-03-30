@@ -1,7 +1,7 @@
 Intro
 =====
 
-MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene annotation data. It's designed with simplicity and performance emphasized. *mygene*, is an easy to use Python module to access MyGene.Info_ services.
+MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene annotation data. It's designed with simplicity and performance emphasized. *mygene*, is an easy-to-use Python wrapper to access MyGene.Info_ services.
 
 .. _MyGene.Info: http://mygene.info
 

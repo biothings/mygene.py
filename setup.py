@@ -14,7 +14,7 @@ setup(
     keywords = "biology gene annotation web service client api",
     url = "http://pypi.python.org/pypi/mygene",
     packages=['mygene', 'tests'],
-    long_description=read('README.txt'),
+    long_description=read('README.rst'),
     classifiers=[
         "Programming Language :: Python",
         "Development Status :: 3 - Alpha",
