@@ -26,6 +26,7 @@ Usage
 =====
 
 ::
+
     In [1]: import mygene
 
     In [2]: mg = mygene.MyGeneInfo()
