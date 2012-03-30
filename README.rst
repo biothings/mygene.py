@@ -15,13 +15,11 @@ Installation
 =============
 
     1. pip install mygene
-    2. download/extract the source code and run:
-::
-   python setup install
+    2. download/extract the source code and run::
+        python setup install
 
-    3. install the latest code directly from the repository:
-::
-    pip install -e hg+https://bitbucket.org/newgene/mygene#egg=mygene
+    3. install the latest code directly from the repository::
+        pip install -e hg+https://bitbucket.org/newgene/mygene#egg=mygene
 
 
 Usage
