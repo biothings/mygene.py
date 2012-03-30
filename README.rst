@@ -24,6 +24,7 @@ Installation
 
 Usage
 =====
+
 ::
     In [1]: import mygene
 
