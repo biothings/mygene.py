@@ -111,14 +111,16 @@ class MyGeneInfo():
     def _repeated_query(self, query_fn, query_li, delay=1, step=1000, verbose=True):
         step = min(step, self.max_query)
         for i in range(0, len(query_li), step):
+            is_last_loop = i+step >= len(query_li)
             if verbose:
                 print "querying %d-%d..." % (i+1, min(i+step, len(query_li))),
             query_result = query_fn(query_li[i:i+step])
 
             yield query_result
 
-            print
-            if delay:
+            if verbose:
+                print
+            if not is_last_loop and delay:
                 time.sleep(delay)
 
     def getgene(self, geneid, filter='symbol,name', **kwargs):
