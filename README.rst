@@ -4,22 +4,26 @@ Intro
 MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene annotation data. It's designed with simplicity and performance emphasized. *mygene*, is an easy-to-use Python wrapper to access MyGene.Info_ services.
 
 .. _MyGene.Info: http://mygene.info
-
+.. _httplib2: http://code.google.com/p/httplib2/
 
 Requirements
 ============
-    httplib2
+    httplib2_ (install using "pip install httplib2")
 
 
 Installation
 =============
 
-    1. pip install mygene
-    2. download/extract the source code and run::
-        python setup install
+    Option 1
+          pip install mygene
 
-    3. install the latest code directly from the repository::
-        pip install -e hg+https://bitbucket.org/newgene/mygene#egg=mygene
+    Options 2
+          download/extract the source code and run::
+           python setup install
+
+    Option 3
+          install the latest code directly from the repository::
+            pip install -e hg+https://bitbucket.org/newgene/mygene#egg=mygene
 
 
 Usage
@@ -35,7 +39,7 @@ Usage
     Out[3]: {'_id': '1017', 'name': 'cyclin-dependent kinase 2', 'symbol': 'CDK2'}
 
     In [4]: mg.getgene(1017, 'name,symbol,refseq')
-    Out[4]: 
+    Out[4]:
     {'_id': '1017',
      'name': 'cyclin-dependent kinase 2',
      'refseq': {'genomic': ['AC_000144.1',
@@ -48,14 +52,14 @@ Usage
      'symbol': 'CDK2'}
 
     In [5]: mg.getgene(1017, 'name,symbol,refseq.rna')
-    Out[5]: 
+    Out[5]:
     {'_id': '1017',
      'name': 'cyclin-dependent kinase 2',
      'refseq': {'rna': ['NM_001798.3', 'NM_052827.2']},
      'symbol': 'CDK2'}
 
     In [6]: mg.getgenes([1017,1018,'ENSG00000148795'])
-    Out[6]: 
+    Out[6]:
     [{'_id': '1017', 'name': 'cyclin-dependent kinase 2', 'symbol': 'CDK2'},
      {'_id': '1018', 'name': 'cyclin-dependent kinase 3', 'symbol': 'CDK3'},
      {'_id': '1586',
@@ -63,7 +67,7 @@ Usage
       'symbol': 'CYP17A1'}]
 
     In [7]:  mg.query('cdk2', limit=5)
-    Out[7]: 
+    Out[7]:
     {'etag': '1358e787924ddb',
      'limit': 5,
      'rows': [{'id': '684247',
@@ -95,7 +99,7 @@ Usage
      'total_rows': 29}
 
     In [8]: mg.query('reporter:1000_at')
-    Out[8]: 
+    Out[8]:
     {'etag': '13574eee908e81',
      'limit': 25,
      'rows': [{'homologene': {'genes': [[9606, 5595],
@@ -114,7 +118,7 @@ Usage
      'total_rows': 1}
 
     In [9]: mg.query('symbol:cdk2 AND species:human')
-    Out[9]: 
+    Out[9]:
     {'etag': '1358e787924ddb',
      'limit': 25,
      'rows': [{'homologene': {'genes': [[9606, 1017],
