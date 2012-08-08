@@ -201,7 +201,11 @@ class MyGeneInfo():
                                 refer to "http://mygene.info/doc/query_service#available_fields" for full
                                 list of fields.
             @param species:     "all" or one of "human", "mouse", "rat", etc.
-                                 refer to http://mygene.info/metadata for all supported species.
+                                 if input is an integer, it's interpreted as a taxonomy id (taxid).
+                                 refer to http://mygene.info/metadata for all supported species and taxids.
+                                 if input species names or taxids are not supported, it will be ignored and
+                                 use default "all".
+
             @param entrezonly:  if True, return only matching entrez gene, otherwise, including matching
                                  Ensemble-only genes (those have no matching entrez genes).
             @param raw:         if True, return a list of raw query results
@@ -209,7 +213,14 @@ class MyGeneInfo():
         '''
         if type(scope) not in [types.ListType, types.TupleType]:
             scope = [scope]
-        taxid = self.taxid_d.get(species, None)
+
+        if type(species) is types.IntType:
+            #so it is a taxid
+            taxid = species if species in self.taxid_d.values() else None
+        else:
+            #otherwise, treat is as a species name
+            taxid = self.taxid_d.get(species, None)
+
         out = []
         res = {}
         li_dup = []
