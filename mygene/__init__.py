@@ -67,10 +67,13 @@ class MyGeneInfo():
                         'pig': 9823,
                        }
 
-    def _get(self, url, params):
+    def _get(self, url, params={}):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
-        _url = url + '?' + urllib.urlencode(params)
+        if params:
+            _url = url + '?' + urllib.urlencode(params)
+        else:
+            _url = url
         res, con = self.h.request(_url)
         if debug:
             return _url, res, con
@@ -122,6 +125,11 @@ class MyGeneInfo():
                 print
             if not is_last_loop and delay:
                 time.sleep(delay)
+
+    @property
+    def metadata(self):
+        _url = self.url+'/metadata'
+        return self._get(_url)
 
     def getgene(self, geneid, filter='symbol,name', **kwargs):
         '''Return the gene object for the give geneid.
