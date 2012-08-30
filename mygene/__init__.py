@@ -47,6 +47,15 @@ def list2dict(list,keyitem,alwayslist=False):
     return dict
 
 
+def safe_str(s, encoding='utf-8'):
+    '''if input is an unicode string, do proper encoding.'''
+    try:
+         _s = str(s)
+    except UnicodeEncodeError:
+         _s = s.encode(encoding)
+    return _s
+
+
 class MyGeneInfo():
     def __init__(self, url='http://mygene.info'):
         self.url = url
@@ -245,7 +254,7 @@ class MyGeneInfo():
                 res.update(list2dict(rows, 0))
         if not raw:
             for id in id_li:
-                rows = res.get(id.lower(), None)
+                rows = res.get(safe_str(id).lower(), None)
                 if rows:
                     if type(rows) is types.ListType:
                         out.append((id,) + tuple(['//'.join([str(row[i]) for row in rows]) for i in range(len(rows[0]))]) )
