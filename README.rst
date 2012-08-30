@@ -58,6 +58,7 @@ Usage
      'refseq': {'rna': ['NM_001798.3', 'NM_052827.2']},
      'symbol': 'CDK2'}
 
+
     In [6]: mg.getgenes([1017,1018,'ENSG00000148795'])
     Out[6]:
     [{'_id': '1017', 'name': 'cyclin-dependent kinase 2', 'symbol': 'CDK2'},
@@ -65,6 +66,7 @@ Usage
      {'_id': '1586',
       'name': 'cytochrome P450, family 17, subfamily A, polypeptide 1',
       'symbol': 'CYP17A1'}]
+
 
     In [7]:  mg.query('cdk2', limit=5)
     Out[7]:
@@ -135,6 +137,60 @@ Usage
        'taxid': 9606}],
      'skip': 0,
      'total_rows': 1}
+
+
+
+    In [10]: mg.findgenes([1017, '695'], scope='entrezgene', species='human')
+    querying 1-2...
+    Finished.
+    Out[10]:
+    [(1017, '1017', 'CDK2', 'cyclin-dependent kinase 2'),
+     ('695', '695', 'BTK', 'Bruton agammaglobulinemia tyrosine kinase')]
+
+    In [11]: mg.findgenes([1017, '695'], scope='entrezgene', species=9606)
+    querying 1-2...
+    Finished.
+    Out[11]:
+    [(1017, '1017', 'CDK2', 'cyclin-dependent kinase 2'),
+     ('695', '695', 'BTK', 'Bruton agammaglobulinemia tyrosine kinase')]
+
+    In [12]: mg.findgenes([1017, '695', 'NA_TEST'], scope='entrezgene', species='human')
+    querying 1-3...
+    Finished.
+    1 input ids found no hit:
+         ['NA_TEST']
+    Out[12]:
+    [(1017, '1017', 'CDK2', 'cyclin-dependent kinase 2'),
+     ('695', '695', 'BTK', 'Bruton agammaglobulinemia tyrosine kinase'),
+     ('NA_TEST', '', '', '')]
+
+    In [13]: mg.findgenes([1017, '695', 'NA_TEST'], scope='entrezgene', species='human', raw=True)
+    querying 1-3...
+    Finished.
+    Out[13]:
+    [{'homologene': {'genes': [[9606, 1017],
+                               [10090, 12566],
+                               [10116, 362817],
+                               [7227, 42453],
+                               [7955, 406715],
+                               [3702, 824036]],
+                      'id': 74409},
+      'id': '1017',
+      'key': ['1017', 'entrezgene'],
+      'name': 'cyclin-dependent kinase 2',
+      'symbol': 'CDK2',
+      'taxid': 9606},
+     {'homologene': {'genes': [[9606, 695],
+                               [10090, 12229],
+                               [10116, 367901],
+                               [7955, 568653]],
+                     'id': 30953},
+      'id': '695',
+      'key': ['695', 'entrezgene'],
+      'name': 'Bruton agammaglobulinemia tyrosine kinase',
+      'symbol': 'BTK',
+      'taxid': 9606}]
+
 
 
 Contact
