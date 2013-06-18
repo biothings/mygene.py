@@ -1,0 +1,8 @@
+v1.0.0 (2013/06/18)
+    Switched default MyGene.info endpoint to "/v1" (prepare for "/v2" migration)
+
+
+v0.1.0 (2012/08/30):
+    initial release
+
+
