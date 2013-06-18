@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name = "mygene",
-    version = "0.1.0",
+    version = "1.0.0",
     author = "Chunlei Wu",
     author_email = "cwu@scripps.edu",
     description = "Python Client for MyGene.Info services.",
