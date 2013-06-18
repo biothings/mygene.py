@@ -57,7 +57,7 @@ def safe_str(s, encoding='utf-8'):
 
 
 class MyGeneInfo():
-    def __init__(self, url='http://mygene.info'):
+    def __init__(self, url='http://mygene.info/v1'):
         self.url = url
         if self.url[-1] == '/':
             self.url = self.url[:-1]
