@@ -5,6 +5,7 @@ syntax: glob
 *.bak
 dist
 build
+mygene.egg-info
 
 # switch to regexp syntax.
 syntax: regexp
