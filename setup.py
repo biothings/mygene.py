@@ -13,7 +13,7 @@ setup(
     license = "BSD",
     keywords = "biology gene annotation web service client api",
     url = "https://bitbucket.org/newgene/mygene",
-    packages=['mygene', 'tests'],
+    packages=['mygene'],
     long_description=read('README.rst'),
     classifiers=[
         "Programming Language :: Python",
