@@ -36,7 +36,12 @@ Usage
     In [2]: mg = mygene.MyGeneInfo()
 
     In [3]: mg.getgene(1017)
-    Out[3]: {'_id': '1017', 'name': 'cyclin-dependent kinase 2', 'symbol': 'CDK2'}
+    Out[3]:
+    {'_id': '1017',
+     'entrezgene': 1017,
+     'name': 'cyclin-dependent kinase 2',
+     'symbol': 'CDK2',
+     'taxid': 9606}
 
     In [4]: mg.getgene(1017, 'name,symbol,refseq')
     Out[4]:
@@ -55,141 +60,144 @@ Usage
     Out[5]:
     {'_id': '1017',
      'name': 'cyclin-dependent kinase 2',
-     'refseq': {'rna': ['NM_001798.3', 'NM_052827.2']},
+     'refseq': {'rna': ['NM_001798', 'NM_052827']},
      'symbol': 'CDK2'}
 
 
     In [6]: mg.getgenes([1017,1018,'ENSG00000148795'])
     Out[6]:
-    [{'_id': '1017', 'name': 'cyclin-dependent kinase 2', 'symbol': 'CDK2'},
-     {'_id': '1018', 'name': 'cyclin-dependent kinase 3', 'symbol': 'CDK3'},
+    [{'_id': '1017',
+      'entrezgene': 1017,
+      'name': 'cyclin-dependent kinase 2',
+      'query': '1017',
+      'symbol': 'CDK2',
+      'taxid': 9606},
+     {'_id': '1018',
+      'entrezgene': 1018,
+      'name': 'cyclin-dependent kinase 3',
+      'query': '1018',
+      'symbol': 'CDK3',
+      'taxid': 9606},
      {'_id': '1586',
+      'entrezgene': 1586,
       'name': 'cytochrome P450, family 17, subfamily A, polypeptide 1',
-      'symbol': 'CYP17A1'}]
+      'query': 'ENSG00000148795',
+      'symbol': 'CYP17A1',
+      'taxid': 9606}]
 
 
-    In [7]:  mg.query('cdk2', limit=5)
+    In [7]:  mg.query('cdk2', size=5)
     Out[7]:
-    {'etag': '1358e787924ddb',
-     'limit': 5,
-     'rows': [{'id': '684247',
-       'name': 'similar to S-phase kinase-associated protein 1A (Cyclin A/CDK2-associated protein p19) (p19A) (p19skp1)',
-       'score': 2.615727663040161,
-       'symbol': 'LOC684247',
+    {'hits': [{'_id': '1017',
+       '_score': 373.24667,
+       'entrezgene': 1017,
+       'name': 'cyclin-dependent kinase 2',
+       'symbol': 'CDK2',
+       'taxid': 9606},
+      {'_id': '12566',
+       '_score': 353.90176,
+       'entrezgene': 12566,
+       'name': 'cyclin-dependent kinase 2',
+       'symbol': 'Cdk2',
+       'taxid': 10090},
+      {'_id': '362817',
+       '_score': 264.88477,
+       'entrezgene': 362817,
+       'name': 'cyclin dependent kinase 2',
+       'symbol': 'Cdk2',
        'taxid': 10116},
-      {'id': '681208',
-       'name': 'similar to S-phase kinase-associated protein 1A (Cyclin A/CDK2-associated protein p19) (p19A) (p19skp1)',
-       'score': 2.288761615753174,
-       'symbol': 'LOC681208',
-       'taxid': 10116},
-      {'id': '690181',
-       'name': 'similar to S-phase kinase-associated protein 1A (Cyclin A/CDK2-associated protein p19) (p19A) (p19skp1)',
-       'score': 2.288761615753174,
-       'symbol': 'LOC690181',
-       'taxid': 10116},
-      {'id': '690646',
-       'name': 'similar to S-phase kinase-associated protein 2 (F-box protein Skp2) (Cyclin A/CDK2-associated protein p45) (F-box/WD-40 protein 1) (FWD1)',
-       'score': 1.9617958068847656,
-       'symbol': 'LOC690646',
-       'taxid': 10116},
-      {'id': '687002',
-       'name': 'similar to S-phase kinase-associated protein 2 (F-box protein Skp2) (Cyclin A/CDK2-associated protein p45) (F-box/WD-40 protein 1) (FWD1)',
-       'score': 1.9617958068847656,
-       'symbol': 'LOC687002',
-       'taxid': 10116}],
-     'skip': 0,
-     'total_rows': 29}
+      {'_id': '52004',
+       '_score': 21.221401,
+       'entrezgene': 52004,
+       'name': 'CDK2-associated protein 2',
+       'symbol': 'Cdk2ap2',
+       'taxid': 10090},
+      {'_id': '143384',
+       '_score': 18.617256,
+       'entrezgene': 143384,
+       'name': 'CDK2-associated, cullin domain 1',
+       'symbol': 'CACUL1',
+       'taxid': 9606}],
+     'max_score': 373.24667,
+     'took': 10,
+     'total': 28}
 
     In [8]: mg.query('reporter:1000_at')
     Out[8]:
-    {'etag': '13574eee908e81',
-     'limit': 25,
-     'rows': [{'homologene': {'genes': [[9606, 5595],
-         [10090, 26417],
-         [10116, 50689],
-         [7955, 399480],
-         [3702, 837559],
-         [3702, 842248]],
-        'id': 55682},
-       'id': '5595',
+    {'hits': [{'_id': '5595',
+       '_score': 11.163337,
+       'entrezgene': 5595,
        'name': 'mitogen-activated protein kinase 3',
-       'score': 8.231849670410156,
        'symbol': 'MAPK3',
        'taxid': 9606}],
-     'skip': 0,
-     'total_rows': 1}
+     'max_score': 11.163337,
+     'took': 6,
+     'total': 1}
 
-    In [9]: mg.query('symbol:cdk2 AND species:human')
+    In [9]: mg.query('symbol:cdk2', species='human')
     Out[9]:
-    {'etag': '1358e787924ddb',
-     'limit': 25,
-     'rows': [{'homologene': {'genes': [[9606, 1017],
-         [10090, 12566],
-         [10116, 362817],
-         [7227, 42453],
-         [7955, 406715],
-         [3702, 824036]],
-        'id': 74409},
-       'id': '1017',
+    {'hits': [{'_id': '1017',
+       '_score': 84.17707,
+       'entrezgene': 1017,
        'name': 'cyclin-dependent kinase 2',
-       'score': 71.34159851074219,
        'symbol': 'CDK2',
        'taxid': 9606}],
-     'skip': 0,
-     'total_rows': 1}
+     'max_score': 84.17707,
+     'took': 27,
+     'total': 1}
 
-
-
-    In [10]: mg.findgenes([1017, '695'], scope='entrezgene', species='human')
-    querying 1-2...
+    In [10]: mg.querymany([1017, '695'], scopes='entrezgene', species='human')
+    querying 1-2... done.
     Finished.
     Out[10]:
-    [(1017, '1017', 'CDK2', 'cyclin-dependent kinase 2'),
-     ('695', '695', 'BTK', 'Bruton agammaglobulinemia tyrosine kinase')]
-
-    In [11]: mg.findgenes([1017, '695'], scope='entrezgene', species=9606)
-    querying 1-2...
-    Finished.
-    Out[11]:
-    [(1017, '1017', 'CDK2', 'cyclin-dependent kinase 2'),
-     ('695', '695', 'BTK', 'Bruton agammaglobulinemia tyrosine kinase')]
-
-    In [12]: mg.findgenes([1017, '695', 'NA_TEST'], scope='entrezgene', species='human')
-    querying 1-3...
-    Finished.
-    1 input ids found no hit:
-         ['NA_TEST']
-    Out[12]:
-    [(1017, '1017', 'CDK2', 'cyclin-dependent kinase 2'),
-     ('695', '695', 'BTK', 'Bruton agammaglobulinemia tyrosine kinase'),
-     ('NA_TEST', '', '', '')]
-
-    In [13]: mg.findgenes([1017, '695', 'NA_TEST'], scope='entrezgene', species='human', raw=True)
-    querying 1-3...
-    Finished.
-    Out[13]:
-    [{'homologene': {'genes': [[9606, 1017],
-                               [10090, 12566],
-                               [10116, 362817],
-                               [7227, 42453],
-                               [7955, 406715],
-                               [3702, 824036]],
-                      'id': 74409},
-      'id': '1017',
-      'key': ['1017', 'entrezgene'],
+    [{'_id': '1017',
+      'entrezgene': 1017,
       'name': 'cyclin-dependent kinase 2',
+      'query': '1017',
       'symbol': 'CDK2',
       'taxid': 9606},
-     {'homologene': {'genes': [[9606, 695],
-                               [10090, 12229],
-                               [10116, 367901],
-                               [7955, 568653]],
-                     'id': 30953},
-      'id': '695',
-      'key': ['695', 'entrezgene'],
+     {'_id': '695',
+      'entrezgene': 695,
       'name': 'Bruton agammaglobulinemia tyrosine kinase',
+      'query': '695',
       'symbol': 'BTK',
       'taxid': 9606}]
+
+    In [11]: mg.querymany([1017, '695'], scopes='entrezgene', species=9606)
+    querying 1-2... done.
+    Finished.
+    Out[11]:
+    [{'_id': '1017',
+      'entrezgene': 1017,
+      'name': 'cyclin-dependent kinase 2',
+      'query': '1017',
+      'symbol': 'CDK2',
+      'taxid': 9606},
+     {'_id': '695',
+      'entrezgene': 695,
+      'name': 'Bruton agammaglobulinemia tyrosine kinase',
+      'query': '695',
+      'symbol': 'BTK',
+      'taxid': 9606}]
+
+    In [12]: mg.findgenes([1017, '695', 'NA_TEST'], scopes='entrezgene', species='human')
+    querying 1-3...
+    Finished.
+    Out[12]:
+    [{'_id': '1017',
+      'entrezgene': 1017,
+      'name': 'cyclin-dependent kinase 2',
+      'query': '1017',
+      'symbol': 'CDK2',
+      'taxid': 9606},
+     {'_id': '695',
+      'entrezgene': 695,
+      'name': 'Bruton agammaglobulinemia tyrosine kinase',
+      'query': '695',
+      'symbol': 'BTK',
+      'taxid': 9606},
+     {'notfound': True, 'query': 'NA_TEST'}]
+
 
 
 
