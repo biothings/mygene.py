@@ -1,4 +1,6 @@
 import unittest
+import sys
+sys.path.insert(0, '..')
 import mygene
 
 class TestSequenceFunctions(unittest.TestCase):
@@ -8,7 +10,8 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_metadata(self):
         meta = self.mg.metadata
-        self.assertTrue("TOTAL_GENE_DOC" in meta)
+        self.assertTrue("stats" in meta)
+        self.assertTrue("total_genes" in meta['stats'])
 
     def test_getgene(self):
         g = self.mg.getgene("1017")
@@ -28,60 +31,54 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(g_li[0]['_id'], '1017')
         self.assertEqual(g_li[1]['_id'], '1018')
         self.assertEqual(g_li[2]['_id'], '1586')
-        
+
     def test_query(self):
-        qres = self.mg.query('cdk2', limit=5)
-        self.assertTrue('rows' in qres)
-        self.assertEqual(len(qres['rows']), 5)
-        
+        qres = self.mg.query('cdk2', size=5)
+        self.assertTrue('hits' in qres)
+        self.assertEqual(len(qres['hits']), 5)
+
     def test_query_reporter(self):
         qres = self.mg.query('reporter:1000_at')
-        self.assertTrue('rows' in qres)
-        self.assertEqual(len(qres['rows']), 1)
-        self.assertEqual(qres['rows'][0]['id'], '5595')
-        
+        self.assertTrue('hits' in qres)
+        self.assertEqual(len(qres['hits']), 1)
+        self.assertEqual(qres['hits'][0]['_id'], '5595')
+
     def test_query_symbol(self):
-        qres = self.mg.query('symbol:cdk2 AND species:human')
-        self.assertTrue('rows' in qres)
-        self.assertEqual(len(qres['rows']), 1)
-        self.assertEqual(qres['rows'][0]['id'], '1017')
+        qres = self.mg.query('symbol:cdk2', species='mouse')
+        self.assertTrue('hits' in qres)
+        self.assertEqual(len(qres['hits']), 1)
+        self.assertEqual(qres['hits'][0]['_id'], '12566')
 
-    
+
     def test_querymany(self):
-        qres = self.mg.querymany([1017, '695'])
-        self.assertTrue('rows' in qres)
-        self.assertEqual(len(qres['rows']), 2)
+        qres = self.mg.querymany([1017, '695'], verbose=False)
+        self.assertEqual(len(qres), 2)
 
-        qres = self.mg.querymany("1017,695")
-        self.assertTrue('rows' in qres)
-        self.assertEqual(len(qres['rows']), 2)
-    
-    def test_querymany_with_scope(self):
-        qres = self.mg.querymany([1017, '695'], scope='entrezgene')
-        self.assertTrue('rows' in qres)
-        self.assertEqual(len(qres['rows']), 2)
-        
-        qres = self.mg.querymany([1017, 'BTK'], scope='entrezgene,symbol')
-        self.assertTrue('rows' in qres)
-        self.assertTrue(len(qres['rows'])>=2)
+        qres = self.mg.querymany("1017,695", verbose=False)
+        self.assertEqual(len(qres), 2)
+
+    def test_querymany_with_scopes(self):
+        qres = self.mg.querymany([1017, '695'], scopes='entrezgene', verbose=False)
+        self.assertEqual(len(qres), 2)
+
+        qres = self.mg.querymany([1017, 'BTK'], scopes='entrezgene,symbol', verbose=False)
+        self.assertTrue(len(qres)>=2)
 
 
-    def test_findgenes(self):
-        qres = self.mg.findgenes([1017, '695'], scope='entrezgene', species='human')
+    def test_querymany_species(self):
+        qres = self.mg.querymany([1017, '695'], scopes='entrezgene', species='human', verbose=False)
         self.assertEqual(len(qres), 2)
-        
-        qres = self.mg.findgenes([1017, '695'], scope='entrezgene', species=9606)
+
+        qres = self.mg.findgenes([1017, '695'], scopes='entrezgene', species=9606, verbose=False)
         self.assertEqual(len(qres), 2)
-        
-        qres = self.mg.findgenes([1017, 'CDK2'], scope='entrezgene,symbol', species=9606)
+
+        qres = self.mg.findgenes([1017, 'CDK2'], scopes='entrezgene,symbol', species=9606, verbose=False)
         self.assertEqual(len(qres), 2)
-        
-        qres = self.mg.findgenes([1017, '695', 'NA_TEST'], scope='entrezgene', species=9606)
+
+    def test_querymany_notfound(self):
+        qres = self.mg.findgenes([1017, '695', 'NA_TEST'], scopes='entrezgene', species=9606)
         self.assertEqual(len(qres), 3)
-        self.assertEqual(qres[2], ('NA_TEST', '', '', ''))
-        
-        qres = self.mg.findgenes([1017, '695'], scope='entrezgene', species=9606, raw=True)
-        self.assertEqual(len(qres), 2)
+        self.assertEqual(qres[2], {"query": 'NA_TEST', "notfound": True})
 
 
 if __name__ == '__main__':
