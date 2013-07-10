@@ -7,6 +7,7 @@ import urllib
 import httplib2
 import json
 
+__version__ = '2.0.0'
 
 def list2dict(list,keyitem,alwayslist=False):
     '''Return a dictionary with specified keyitem as key, others as values.
@@ -175,6 +176,7 @@ class MyGeneInfo():
              @param species: optionally, you can pass comma-separated species names
                               or taxonomy ids
              @param filter: alias for fields
+
           Ref: http://mygene.info/doc/annotation_service.html
         '''
         if type(geneids) in types.StringTypes:

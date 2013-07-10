@@ -1,3 +1,11 @@
+v2.0.0 (2013/07/08)
+    Migrated to use MyGene.info v2 API.
+    With the support of v2 API, "query" and "querymany" methods now both support "fields" parameter to return user-specified fields for gene hits.
+    "filter" parameter is replaced by "fields", "filter" is still kept for back-compatibility.
+    New "species" parameter for all methods for filter by species.
+    "getgenes" and "querymany" methods are both support very long input list. It splits input into multiple batch queries with 1000 query terms as one batch, and concatenate the result automatically.
+    "findgenes" method is deprecated now, still kept as an alias of "querymany" method.
+
 v1.0.0 (2013/06/18)
     Switched default MyGene.info endpoint to "/v1" (prepare for "/v2" migration)
     Mark the version as v1.0.0

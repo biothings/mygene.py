@@ -2,6 +2,7 @@ import unittest
 import sys
 sys.path.insert(0, '..')
 import mygene
+print '"mygene {}" loaded from "{}"'.format(mygene.__version__, mygene.__file__)
 
 class TestSequenceFunctions(unittest.TestCase):
 
