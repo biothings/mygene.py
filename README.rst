@@ -29,7 +29,7 @@ Installation
 Usage
 =====
 
-::
+.. code-block:: python
 
     In [1]: import mygene
 
