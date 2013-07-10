@@ -5,10 +5,7 @@ import types
 import time
 import urllib
 import httplib2
-try:
-    import simplejson as json
-except:
-    import json
+import json
 
 
 def list2dict(list,keyitem,alwayslist=False):
@@ -74,6 +71,9 @@ class MyGeneInfo():
             self.url = self.url[:-1]
         self.h = httplib2.Http()
         self.max_query=1000
+        #delay and step attributes are for batch queries.
+        self.delay = 1
+        self.step = 1000
 
     def _get(self, url, params={}):
         debug = params.pop('debug', False)
@@ -119,8 +119,11 @@ class MyGeneInfo():
             _out = a_list     # a_list is already a comma separated string
         return _out
 
-    def _repeated_query(self, query_fn, query_li, delay=1, step=1000, verbose=True, **fn_kwargs):
-        step = min(step, self.max_query)
+    def _repeated_query(self, query_fn, query_li, verbose=True, **fn_kwargs):
+        step = min(self.step, self.max_query)
+        if len(query_li) <= step:
+            #No need to do series of batch queries, turn off verbose output
+            verbose = False
         for i in range(0, len(query_li), step):
             is_last_loop = i+step >= len(query_li)
             if verbose:
@@ -131,8 +134,8 @@ class MyGeneInfo():
 
             if verbose:
                 print "done."
-            if not is_last_loop and delay:
-                time.sleep(delay)
+            if not is_last_loop and self.delay:
+                time.sleep(self.delay)
 
     @property
     def metadata(self):
@@ -157,6 +160,12 @@ class MyGeneInfo():
         _url = self.url + '/gene/' + str(geneid)
         return self._get(_url, kwargs)
 
+    def _getgenes_inner(self, geneids, **kwargs):
+        _kwargs = {'ids': self._format_list(geneids)}
+        _kwargs.update(kwargs)
+        _url = self.url + '/gene'
+        return self._post(_url, _kwargs)
+
     def getgenes(self, geneids, fields='symbol,name,taxid,entrezgene', **kwargs):
         '''Return the list of gene object for the given list of geneids.
            This is a wrapper for POST query of "/gene" service.
@@ -168,12 +177,20 @@ class MyGeneInfo():
              @param filter: alias for fields
           Ref: http://mygene.info/doc/annotation_service.html
         '''
-        kwargs.update({'ids': self._format_list(geneids)})
+        if type(geneids) in types.StringTypes:
+            geneids = geneids.split(',')
+        if (not (type(geneids) in (types.ListType, types.TupleType) and len(geneids) > 0)):
+            raise ValueError('input "geneids" must be non-empty list or tuple.')
         if fields: kwargs['fields'] = self._format_list(fields)
         if 'filter' in kwargs:
             kwargs['fields'] = self._format_list(kwargs['filter'])
-        _url = self.url + '/gene'
-        return self._post(_url, kwargs)
+        verbose = kwargs.pop('verbose', True)
+
+        query_fn = lambda geneids: self._getgenes_inner(geneids, **kwargs)
+        out = []
+        for hits in self._repeated_query(query_fn, geneids, verbose=verbose):
+            out.extend(hits)
+        return out
 
     def query(self, q, **kwargs):
         '''Return  the query result.
@@ -187,6 +204,8 @@ class MyGeneInfo():
             @param skip:    the number of results to skip. Default: 0.
             @param sort:    Prefix with "-" for descending order, otherwise in ascending order.
                             Default: sort by matching scores in decending order.
+            @param entrezonly:  if True, return only matching entrez genes, otherwise, including matching
+                                 Ensemble-only genes (those have no matching entrez genes).
 
             Ref: http://mygene.info/doc/query_service.html
         '''
@@ -213,19 +232,13 @@ class MyGeneInfo():
                             if fields=="all", all available fields are returned.
             @param species: optionally, you can pass comma-separated species names
                               or taxonomy ids. Default: human,mouse,rat.
-            @param entrezonly:  if True, return only matching entrez gene, otherwise, including matching
+            @param entrezonly:  if True, return only matching entrez genes, otherwise, including matching
                                  Ensemble-only genes (those have no matching entrez genes).
 
-            @delay
-            @step
-            #@param raw:         if True, return a list of raw query results
             @param returnall:   if True, return a dict of all related data, including dup. and missing qterms
-            #@asiter:            if True, return a iterator instead of a list
-            @verbose            if True (default), print out infomation about dup and missing qterms
-
+            @param verbose:     if True (default), print out infomation about dup and missing qterms
 
             Ref: http://mygene.info/doc/query_service.html
-
         '''
         if type(qterms) in types.StringTypes:
             qterms = qterms.split(',')
@@ -239,10 +252,7 @@ class MyGeneInfo():
             kwargs['scopes'] = self._format_list(kwargs['scope'])
         if 'species' in kwargs:
             kwargs['species'] = self._format_list(kwargs['species'])
-        raw = kwargs.pop('raw', False)
         returnall = kwargs.pop('returnall', False)
-        delay = kwargs.pop('delay', 1)
-        step = kwargs.pop('step', 1000)
         verbose = kwargs.pop('verbose', True)
 
         out = []
@@ -250,7 +260,7 @@ class MyGeneInfo():
         li_dup = []
         li_query = []
         query_fn = lambda qterms: self._querymany_inner(qterms, **kwargs)
-        for hits in self._repeated_query(query_fn, qterms, delay=delay, step=step, verbose=verbose):
+        for hits in self._repeated_query(query_fn, qterms, verbose=verbose):
             out.extend(hits)
             for hit in hits:
                 if hit.get('notfound', False):
@@ -281,5 +291,7 @@ class MyGeneInfo():
 
     def findgenes(self, id_li, **kwargs):
         ''' Deprecated! It's kept here as an alias of "querymany" method.'''
+        import warnings
+        warnings.warn('Deprecated! Currently an alias of "querymany" method. Use "querymany" method directly.', DeprecationWarning)
         return self.querymany(id_li, **kwargs)
 
