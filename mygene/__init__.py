@@ -79,11 +79,12 @@ class MyGeneInfo():
     def _get(self, url, params={}):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
+        headers = {'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
         if params:
             _url = url + '?' + urllib.urlencode(params)
         else:
             _url = url
-        res, con = self.h.request(_url)
+        res, con = self.h.request(_url, headers=headers)
         if debug:
             return _url, res, con
         assert res.status == 200, (_url, res, con)
@@ -96,7 +97,8 @@ class MyGeneInfo():
     def _post(self, url, params):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
-        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        headers = {'content-type': 'application/x-www-form-urlencoded',
+                   'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
         res, con = self.h.request(url, 'POST', body=urllib.urlencode(params), headers=headers)
         if debug:
             return url, res, con
