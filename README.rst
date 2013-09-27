@@ -17,7 +17,7 @@ Installation
     Option 1
           pip install mygene
 
-    Options 2
+    Option 2
           download/extract the source code and run::
            python setup install
 
@@ -180,7 +180,7 @@ Usage
       'symbol': 'BTK',
       'taxid': 9606}]
 
-    In [12]: mg.findgenes([1017, '695', 'NA_TEST'], scopes='entrezgene', species='human')
+    In [12]: mg.querymany([1017, '695', 'NA_TEST'], scopes='entrezgene', species='human')
     querying 1-3...
     Finished.
     Out[12]:
