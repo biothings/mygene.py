@@ -254,6 +254,8 @@ class MyGeneInfo():
         if 'scope' in kwargs:
             #allow scope for back-compatibility
             kwargs['scopes'] = self._format_list(kwargs['scope'])
+        if 'fields' in kwargs:
+            kwargs['fields'] = self._format_list(kwargs['fields'])
         if 'species' in kwargs:
             kwargs['species'] = self._format_list(kwargs['species'])
         returnall = kwargs.pop('returnall', False)
