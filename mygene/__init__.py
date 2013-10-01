@@ -7,7 +7,7 @@ import urllib
 import httplib2
 import json
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 def list2dict(list,keyitem,alwayslist=False):
     '''Return a dictionary with specified keyitem as key, others as values.

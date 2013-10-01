@@ -1,3 +1,6 @@
+v2.0.1 (2013/09/27)
+    "fields" parameter in "querymany" method now accepts a list as well, besides a comma-separated string.
+
 v2.0.0 (2013/07/08)
     Migrated to use MyGene.info v2 API.
     With the support of v2 API, "query" and "querymany" methods now both support "fields" parameter to return user-specified fields for gene hits.
