@@ -29,7 +29,7 @@ Installation
 Tutorial
 =========
 
-* `ID mapping using mygene module in Python<http://nbviewer.ipython.org/6771106>`_
+* `ID mapping using mygene module in Python <http://nbviewer.ipython.org/6771106>`_
 
 
 Usage
