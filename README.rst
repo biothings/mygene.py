@@ -19,12 +19,18 @@ Installation
 
     Option 2
           download/extract the source code and run::
-           python setup install
+
+           python setup.py install
 
     Option 3
           install the latest code directly from the repository::
+
             pip install -e hg+https://bitbucket.org/newgene/mygene#egg=mygene
 
+Version history
+===============
+
+    `CHANGES.txt <https://bitbucket.org/newgene/mygene/raw/tip/CHANGES.txt>`_
 
 Tutorial
 =========
