@@ -76,6 +76,15 @@ class TestSequenceFunctions(unittest.TestCase):
         qres = self.mg.findgenes([1017, 'CDK2'], scopes='entrezgene,symbol', species=9606, verbose=False)
         self.assertEqual(len(qres), 2)
 
+    def test_querymany_fields(self):
+        qres1 = self.mg.findgenes([1017, 'CDK2'], scopes='entrezgene,symbol', fields=['uniprot', 'unigene'], species=9606, verbose=False)
+        self.assertEqual(len(qres1), 2)
+
+        qres2 = self.mg.findgenes([1017, 'CDK2'], scopes='entrezgene,symbol', fields='uniprot,unigene', species=9606, verbose=False)
+        self.assertEqual(len(qres2), 2)
+
+        self.assertEqual(qres1, qres2)
+
     def test_querymany_notfound(self):
         qres = self.mg.findgenes([1017, '695', 'NA_TEST'], scopes='entrezgene', species=9606)
         self.assertEqual(len(qres), 3)
