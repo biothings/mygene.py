@@ -9,4 +9,4 @@ mygene.egg-info
 
 # switch to regexp syntax.
 syntax: regexp
-#^\.pc/
+^\.tox/
