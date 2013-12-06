@@ -3,7 +3,6 @@ Python Client for MyGene.Info services
 '''
 from __future__ import print_function
 import sys
-import types
 import time
 import httplib2
 import json
@@ -11,9 +10,10 @@ import json
 __version__ = '2.0.1'
 
 if sys.version_info[0] == 3:
-    unicode = str
+    str_types = str
     from urllib.parse import urlencode
 else:
+    str_types = (str, unicode)
     from urllib import urlencode
 
 
@@ -191,7 +191,7 @@ class MyGeneInfo():
 
           Ref: http://mygene.info/doc/annotation_service.html
         '''
-        if isinstance(geneids, (str, unicode)):
+        if isinstance(geneids, str_types):
             geneids = geneids.split(',')
         if (not (isinstance(geneids, (list, tuple)) and len(geneids) > 0)):
             raise ValueError('input "geneids" must be non-empty list or tuple.')
@@ -255,7 +255,7 @@ class MyGeneInfo():
 
             Ref: http://mygene.info/doc/query_service.html
         '''
-        if isinstance(qterms, (str, unicode)):
+        if isinstance(qterms, str_types):
             qterms = qterms.split(',')
         if (not (isinstance(qterms, (list, tuple)) and len(qterms) > 0)):
             raise ValueError('input "qterms" must be non-empty list or tuple.')
