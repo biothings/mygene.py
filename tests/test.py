@@ -1,8 +1,10 @@
 import unittest
 import sys
-sys.path.insert(0, '..')
+import os.path
+sys.path.insert(0, os.path.split(os.path.split(os.path.abspath(__file__))[0])[0])
 import mygene
-sys.stdout.write('"mygene {}" loaded from "{}"\n'.format(mygene.__version__, mygene.__file__))
+sys.stdout.write('"mygene {0}" loaded from "{1}"\n'.format(mygene.__version__, mygene.__file__))
+
 
 class TestSequenceFunctions(unittest.TestCase):
 
@@ -27,7 +29,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertTrue('refseq' in g)
 
     def test_getgenes(self):
-        g_li = self.mg.getgenes([1017,1018,'ENSG00000148795'])
+        g_li = self.mg.getgenes([1017, 1018, 'ENSG00000148795'])
         self.assertEqual(len(g_li), 3)
         self.assertEqual(g_li[0]['_id'], '1017')
         self.assertEqual(g_li[1]['_id'], '1018')
@@ -50,7 +52,6 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(len(qres['hits']), 1)
         self.assertEqual(qres['hits'][0]['_id'], '12566')
 
-
     def test_querymany(self):
         qres = self.mg.querymany([1017, '695'], verbose=False)
         self.assertEqual(len(qres), 2)
@@ -63,8 +64,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(len(qres), 2)
 
         qres = self.mg.querymany([1017, 'BTK'], scopes='entrezgene,symbol', verbose=False)
-        self.assertTrue(len(qres)>=2)
-
+        self.assertTrue(len(qres) >= 2)
 
     def test_querymany_species(self):
         qres = self.mg.querymany([1017, '695'], scopes='entrezgene', species='human', verbose=False)
