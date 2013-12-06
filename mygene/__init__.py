@@ -1,6 +1,7 @@
 '''
 Python Client for MyGene.Info services
 '''
+from __future__ import print_function
 import types
 import time
 import urllib
@@ -130,13 +131,13 @@ class MyGeneInfo():
         for i in range(0, len(query_li), step):
             is_last_loop = i+step >= len(query_li)
             if verbose:
-                print "querying %d-%d..." % (i+1, min(i+step, len(query_li))),
+                print("querying {}-{}...".format(i+1, min(i+step, len(query_li))), end="")
             query_result = query_fn(query_li[i:i+step], **fn_kwargs)
 
             yield query_result
 
             if verbose:
-                print "done."
+                print("done.")
             if not is_last_loop and self.delay:
                 time.sleep(self.delay)
 
@@ -274,7 +275,7 @@ class MyGeneInfo():
                 else:
                     li_query.append(hit['query'])
         if verbose:
-            print "Finished."
+            print("Finished.")
         #check dup hits
         if li_query:
             li_dup = [(query, cnt) for query, cnt in list_itemcnt(li_query) if cnt > 1]
@@ -282,16 +283,16 @@ class MyGeneInfo():
 
         if verbose:
             if li_dup:
-                print "%d input query terms found dup hits:" % len(li_dup)
-                print "\t"+str(li_dup)[:100]
+                print("{} input query terms found dup hits:".format(len(li_dup)))
+                print("\t"+str(li_dup)[:100])
             if li_missing:
-                print "%d input query terms found no hit:" % len(li_missing)
-                print "\t"+str(li_missing)[:100]
+                print("{} input query terms found no hit:".format(len(li_missing)))
+                print("\t"+str(li_missing)[:100])
         if returnall:
             return {'out': out, 'dup':li_dup, 'missing':li_missing}
         else:
             if verbose and (li_dup or li_missing):
-                print 'Pass "returnall=True" to return complete lists of duplicate or missing query terms.'
+                print('Pass "returnall=True" to return complete lists of duplicate or missing query terms.')
             return out
 
 
@@ -300,4 +301,3 @@ class MyGeneInfo():
         import warnings
         warnings.warn('Deprecated! Currently an alias of "querymany" method. Use "querymany" method directly.', DeprecationWarning)
         return self.querymany(id_li, **kwargs)
-
