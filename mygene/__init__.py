@@ -2,15 +2,22 @@
 Python Client for MyGene.Info services
 '''
 from __future__ import print_function
+import sys
 import types
 import time
-import urllib
 import httplib2
 import json
 
 __version__ = '2.0.1'
 
-def list2dict(list,keyitem,alwayslist=False):
+if sys.version_info[0] == 3:
+    unicode = str
+    from urllib.parse import urlencode
+else:
+    from urllib import urlencode
+
+
+def list2dict(list, keyitem, alwayslist=False):
     '''Return a dictionary with specified keyitem as key, others as values.
        keyitem can be an index or a sequence of indexes.
        For example: li=[['A','a',1],
@@ -22,48 +29,48 @@ def list2dict(list,keyitem,alwayslist=False):
                     list2dict(li,0,True)---> {'A':[('a',1),('b',3)],
                                               'B':[('a',2),]}
     '''
-    dict={}
+    dict = {}
     for x in list:
-        if type(keyitem)==type(0):      #single item as key
-            key=x[keyitem]
-            value=tuple(x[:keyitem]+x[keyitem+1:])
-        else:                           #
-            key=tuple([x[i] for i in keyitem])
-            value=tuple([x[i] for i in range(len(list)) if i not in keyitem])
-        if len(value) == 1:      #single value
-            value=value[0]
-        if not dict.has_key(key):
-            if alwayslist:
-                dict[key] = [value,]
-            else:
-                dict[key]=value
+        if isinstance(keyitem, int):      # single item as key
+            key = x[keyitem]
+            value = tuple(x[:keyitem] + x[keyitem+1:])
         else:
-            current_value=dict[key]
-            if type(current_value) != type([]):
-                current_value=[current_value,]
+            key = tuple([x[i] for i in keyitem])
+            value = tuple([x[i] for i in range(len(list)) if i not in keyitem])
+        if len(value) == 1:      # single value
+            value = value[0]
+        if key not in dict:
+            if alwayslist:
+                dict[key] = [value]
+            else:
+                dict[key] = value
+        else:
+            current_value = dict[key]
+            if not isinstance(current_value, list):
+                current_value = [current_value]
             current_value.append(value)
-            dict[key]=current_value
+            dict[key] = current_value
     return dict
 
 
 def safe_str(s, encoding='utf-8'):
     '''if input is an unicode string, do proper encoding.'''
     try:
-         _s = str(s)
+        _s = str(s)
     except UnicodeEncodeError:
-         _s = s.encode(encoding)
+        _s = s.encode(encoding)
     return _s
 
 
 def list_itemcnt(list):
     '''Return number of occurrence for each type of item in the list.'''
-    x={}
+    x = {}
     for item in list:
-        if x.has_key(item):
-            x[item]+=1
+        if item in x:
+            x[item] += 1
         else:
-            x[item]=1
-    return [(i,x[i]) for i in x]
+            x[item] = 1
+    return [(i, x[i]) for i in x]
 
 
 class MyGeneInfo():
@@ -72,7 +79,7 @@ class MyGeneInfo():
         if self.url[-1] == '/':
             self.url = self.url[:-1]
         self.h = httplib2.Http()
-        self.max_query=1000
+        self.max_query = 1000
         #delay and step attributes are for batch queries.
         self.delay = 1
         self.step = 1000
@@ -82,10 +89,11 @@ class MyGeneInfo():
         return_raw = params.pop('return_raw', False)
         headers = {'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
         if params:
-            _url = url + '?' + urllib.urlencode(params)
+            _url = url + '?' + urlencode(params)
         else:
             _url = url
         res, con = self.h.request(_url, headers=headers)
+        con = con.decode("utf8")  # required in python3
         if debug:
             return _url, res, con
         assert res.status == 200, (_url, res, con)
@@ -94,13 +102,13 @@ class MyGeneInfo():
         else:
             return json.loads(con)
 
-
     def _post(self, url, params):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
                    'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
-        res, con = self.h.request(url, 'POST', body=urllib.urlencode(params), headers=headers)
+        res, con = self.h.request(url, 'POST', body=urlencode(params), headers=headers)
+        con = con.decode("utf8")  # required in python3
         if debug:
             return url, res, con
         assert res.status == 200, (url, res, con)
@@ -117,7 +125,7 @@ class MyGeneInfo():
             return False
 
     def _format_list(self, a_list, sep=','):
-        if type(a_list) in (types.ListType, types.TupleType):
+        if isinstance(a_list, (list, tuple)):
             _out = sep.join([safe_str(x) for x in a_list])
         else:
             _out = a_list     # a_list is already a comma separated string
@@ -158,7 +166,8 @@ class MyGeneInfo():
 
            Ref: http://mygene.info/doc/annotation_service.html
         '''
-        if fields: kwargs['fields'] = self._format_list(fields)
+        if fields:
+            kwargs['fields'] = self._format_list(fields)
         if 'filter' in kwargs:
             kwargs['fields'] = self._format_list(kwargs['filter'])
         _url = self.url + '/gene/' + str(geneid)
@@ -182,11 +191,12 @@ class MyGeneInfo():
 
           Ref: http://mygene.info/doc/annotation_service.html
         '''
-        if type(geneids) in types.StringTypes:
+        if isinstance(geneids, (str, unicode)):
             geneids = geneids.split(',')
-        if (not (type(geneids) in (types.ListType, types.TupleType) and len(geneids) > 0)):
+        if (not (isinstance(geneids, (list, tuple)) and len(geneids) > 0)):
             raise ValueError('input "geneids" must be non-empty list or tuple.')
-        if fields: kwargs['fields'] = self._format_list(fields)
+        if fields:
+            kwargs['fields'] = self._format_list(fields)
         if 'filter' in kwargs:
             kwargs['fields'] = self._format_list(kwargs['filter'])
         verbose = kwargs.pop('verbose', True)
@@ -245,9 +255,9 @@ class MyGeneInfo():
 
             Ref: http://mygene.info/doc/query_service.html
         '''
-        if type(qterms) in types.StringTypes:
+        if isinstance(qterms, (str, unicode)):
             qterms = qterms.split(',')
-        if (not (type(qterms) in (types.ListType, types.TupleType) and len(qterms) > 0)):
+        if (not (isinstance(qterms, (list, tuple)) and len(qterms) > 0)):
             raise ValueError('input "qterms" must be non-empty list or tuple.')
 
         if scopes:
@@ -289,12 +299,11 @@ class MyGeneInfo():
                 print("{} input query terms found no hit:".format(len(li_missing)))
                 print("\t"+str(li_missing)[:100])
         if returnall:
-            return {'out': out, 'dup':li_dup, 'missing':li_missing}
+            return {'out': out, 'dup': li_dup, 'missing': li_missing}
         else:
             if verbose and (li_dup or li_missing):
                 print('Pass "returnall=True" to return complete lists of duplicate or missing query terms.')
             return out
-
 
     def findgenes(self, id_li, **kwargs):
         ''' Deprecated! It's kept here as an alias of "querymany" method.'''
