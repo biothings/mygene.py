@@ -139,7 +139,7 @@ class MyGeneInfo():
         for i in range(0, len(query_li), step):
             is_last_loop = i+step >= len(query_li)
             if verbose:
-                print("querying {}-{}...".format(i+1, min(i+step, len(query_li))), end="")
+                print("querying {0}-{1}...".format(i+1, min(i+step, len(query_li))), end="")
             query_result = query_fn(query_li[i:i+step], **fn_kwargs)
 
             yield query_result
@@ -293,10 +293,10 @@ class MyGeneInfo():
 
         if verbose:
             if li_dup:
-                print("{} input query terms found dup hits:".format(len(li_dup)))
+                print("{0} input query terms found dup hits:".format(len(li_dup)))
                 print("\t"+str(li_dup)[:100])
             if li_missing:
-                print("{} input query terms found no hit:".format(len(li_missing)))
+                print("{0} input query terms found no hit:".format(len(li_missing)))
                 print("\t"+str(li_missing)[:100])
         if returnall:
             return {'out': out, 'dup': li_dup, 'missing': li_missing}
