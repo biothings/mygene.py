@@ -7,7 +7,7 @@ import time
 import httplib2
 import json
 
-__version__ = '2.0.1'
+__version__ = '2.1.0'
 
 if sys.version_info[0] == 3:
     str_types = str
