@@ -8,6 +8,8 @@ MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene ann
 
 Requirements
 ============
+    python >=2.6 (including python3)
+
     httplib2_ (install using "pip install httplib2")
 
 
@@ -215,4 +217,4 @@ Usage
 
 Contact
 ========
-Drop us any feedback at: help@mygene.info
+Drop us any feedback at: help@mygene.info or on twitter `@mygeneinfo <https://twitter.com/mygeneinfo>`_.
