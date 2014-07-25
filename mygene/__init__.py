@@ -6,8 +6,13 @@ import sys
 import time
 import httplib2
 import json
+try:
+    from pandas import DataFrame
+    df_avail = True
+except:
+    df_avail = False
 
-__version__ = '2.1.0'
+__version__ = '2.2.0'
 
 if sys.version_info[0] == 3:
     str_types = str
@@ -84,9 +89,20 @@ class MyGeneInfo():
         self.delay = 1
         self.step = 1000
 
+    def _dataframe(self, gene_obj):
+        """
+        converts gene object to DataFrame (pandas)
+        """
+        if 'hits' in gene_obj:
+            df = DataFrame.from_dict(gene_obj['hits'])
+        else:
+            df = DataFrame.from_dict(gene_obj).set_index('query')
+        return df
+
     def _get(self, url, params={}):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
+        as_dataframe = params.pop('as_dataframe', False)
         headers = {'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
         if params:
             _url = url + '?' + urlencode(params)
@@ -99,12 +115,18 @@ class MyGeneInfo():
         assert res.status == 200, (_url, res, con)
         if return_raw:
             return con
+        elif as_dataframe:
+            if df_avail:
+                return self._dataframe(json.loads(con))
+            else:
+                print("pandas module must be installed for as_dataframe.")
         else:
             return json.loads(con)
 
     def _post(self, url, params):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
+        as_dataframe = params.pop('as_dataframe', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
                    'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
         res, con = self.h.request(url, 'POST', body=urlencode(params), headers=headers)
@@ -114,6 +136,11 @@ class MyGeneInfo():
         assert res.status == 200, (url, res, con)
         if return_raw:
             return con
+        elif as_dataframe:
+            if df_avail:
+                return self._dataframe(json.loads(con))
+            else:
+                print("pandas module must be installed for as_dataframe.")
         else:
             return json.loads(con)
 
@@ -168,6 +195,7 @@ class MyGeneInfo():
         '''
         if fields:
             kwargs['fields'] = self._format_list(fields)
+            kwargs['as_dataframe'] = False
         if 'filter' in kwargs:
             kwargs['fields'] = self._format_list(kwargs['filter'])
         _url = self.url + '/gene/' + str(geneid)
@@ -188,7 +216,10 @@ class MyGeneInfo():
              @param species: optionally, you can pass comma-separated species names
                               or taxonomy ids
              @param filter: alias for fields
-
+             @param as_dataframe: if True, return object as dataframe.
+             @param ind: if True (default), index dataframe by 'query', else index
+                    by number. Only applicable if as_dataframe=True.
+                    Always False for query() function
           Ref: http://mygene.info/doc/annotation_service.html
         '''
         if isinstance(geneids, str_types):
@@ -204,8 +235,16 @@ class MyGeneInfo():
         query_fn = lambda geneids: self._getgenes_inner(geneids, **kwargs)
         out = []
         for hits in self._repeated_query(query_fn, geneids, verbose=verbose):
-            out.extend(hits)
-        return out
+            # as_dataframe == True
+            if isinstance(hits, DataFrame):
+                return hits
+            # return_raw == True
+            if isinstance(hits, str_types):
+                out.append(hits)
+            # no modifiers
+            elif isinstance(hits, list):
+                out.extend(hits)
+            return out
 
     def query(self, q, **kwargs):
         '''Return  the query result.
@@ -219,9 +258,9 @@ class MyGeneInfo():
             @param skip:    the number of results to skip. Default: 0.
             @param sort:    Prefix with "-" for descending order, otherwise in ascending order.
                             Default: sort by matching scores in decending order.
-            @param entrezonly:  if True, return only matching entrez genes, otherwise, including matching
+            @param entrezonly: if True, return only matching entrez genes, otherwise, including matching
                                  Ensemble-only genes (those have no matching entrez genes).
-
+            @param as_dataframe: if True, return object as dataframe.
             Ref: http://mygene.info/doc/query_service.html
         '''
         kwargs.update({'q': q})
@@ -252,7 +291,7 @@ class MyGeneInfo():
 
             @param returnall:   if True, return a dict of all related data, including dup. and missing qterms
             @param verbose:     if True (default), print out infomation about dup and missing qterms
-
+            @param as_dataframe: if True, return object as dataframe.
             Ref: http://mygene.info/doc/query_service.html
         '''
         if isinstance(qterms, str_types):
@@ -278,12 +317,24 @@ class MyGeneInfo():
         li_query = []
         query_fn = lambda qterms: self._querymany_inner(qterms, **kwargs)
         for hits in self._repeated_query(query_fn, qterms, verbose=verbose):
-            out.extend(hits)
-            for hit in hits:
-                if hit.get('notfound', False):
-                    li_missing.append(hit['query'])
-                else:
-                    li_query.append(hit['query'])
+            # as_dataframe == True
+            if isinstance(hits, DataFrame):
+                return hits
+            # return_raw == True
+            if isinstance(hits, str_types):
+            #if isinstance(hits, (DataFrame, str_types)):
+                out.append(hits)
+            # no modifiers
+            elif isinstance(hits, list):
+                out.extend(hits)
+            # returnall == True
+            if returnall:
+                for hit in hits:
+                    if hit.get('notfound', False):
+                        li_missing.append(hit['query'])
+                    else:
+                        li_query.append(hit['query'])
+
         if verbose:
             print("Finished.")
         #check dup hits
