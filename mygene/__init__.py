@@ -22,6 +22,14 @@ else:
     from urllib import urlencode
 
 
+def alwayslist(value):
+    """If input value if not a list/tuple type, return it as a single value list."""
+    if isinstance(value, (list, tuple)):
+        return value
+    else:
+        return [value]
+
+
 def list2dict(list, keyitem, alwayslist=False):
     '''Return a dictionary with specified keyitem as key, others as values.
        keyitem can be an index or a sequence of indexes.
