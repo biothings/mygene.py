@@ -30,42 +30,6 @@ def alwayslist(value):
         return [value]
 
 
-def list2dict(list, keyitem, alwayslist=False):
-    '''Return a dictionary with specified keyitem as key, others as values.
-       keyitem can be an index or a sequence of indexes.
-       For example: li=[['A','a',1],
-                        ['B','a',2],
-                        ['A','b',3]]
-                    list2dict(li,0)---> {'A':[('a',1),('b',3)],
-                                         'B':('a',2)}
-       if alwayslist is True, values are always a list even there is only one item in it.
-                    list2dict(li,0,True)---> {'A':[('a',1),('b',3)],
-                                              'B':[('a',2),]}
-    '''
-    dict = {}
-    for x in list:
-        if isinstance(keyitem, int):      # single item as key
-            key = x[keyitem]
-            value = tuple(x[:keyitem] + x[keyitem+1:])
-        else:
-            key = tuple([x[i] for i in keyitem])
-            value = tuple([x[i] for i in range(len(list)) if i not in keyitem])
-        if len(value) == 1:      # single value
-            value = value[0]
-        if key not in dict:
-            if alwayslist:
-                dict[key] = [value]
-            else:
-                dict[key] = value
-        else:
-            current_value = dict[key]
-            if not isinstance(current_value, list):
-                current_value = [current_value]
-            current_value.append(value)
-            dict[key] = current_value
-    return dict
-
-
 def safe_str(s, encoding='utf-8'):
     '''if input is an unicode string, do proper encoding.'''
     try:
