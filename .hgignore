@@ -6,6 +6,7 @@ syntax: glob
 dist
 build
 mygene.egg-info
+docs/_build
 
 # switch to regexp syntax.
 syntax: regexp
