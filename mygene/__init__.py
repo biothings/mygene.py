@@ -23,7 +23,7 @@ else:
 
 
 def alwayslist(value):
-    """If input value if not a list/tuple type, return it as a single value list."""
+    '''If input value if not a list/tuple type, return it as a single value list.'''
     if isinstance(value, (list, tuple)):
         return value
     else:
@@ -150,14 +150,17 @@ class MyGeneInfo():
     def getgene(self, geneid, fields='symbol,name,taxid,entrezgene', **kwargs):
         '''Return the gene object for the give geneid.
            This is a wrapper for GET query of "/gene/<geneid>" service.
-             @param geneid: entrez/ensembl gene id
-             @param fields: fields to return, a list of a comma-sep string
-                            if fields=="all", all available fields are returned.
-             @param species: optionally, you can pass comma-separated species names
+             :param geneid: entrez/ensembl gene id, entrez gene id can be either
+                            a string or integer
+             :param fields: fields to return, a list or a comma-sep string
+                            if fields=="all", all available fields are returned
+             :param species: optionally, you can pass comma-separated species names
                               or taxonomy ids
-             @param filter: alias for fields
+             :param email: optionally, pass your email to help us to track usage
+             :param filter: alias for fields
 
-           Ref: http://mygene.info/doc/annotation_service.html
+           :ref: http://mygene.info/doc/annotation_service.html for available
+                 fields, extra *kwargs* and more.
         '''
         if fields:
             kwargs['fields'] = self._format_list(fields)
@@ -175,17 +178,19 @@ class MyGeneInfo():
     def getgenes(self, geneids, fields='symbol,name,taxid,entrezgene', **kwargs):
         '''Return the list of gene object for the given list of geneids.
            This is a wrapper for POST query of "/gene" service.
-             @param geneids: a list or comm-sep entrez/ensembl gene ids
-             @param fields: fields to return, a list of a comma-sep string
+             :param geneids: a list or comm-sep entrez/ensembl gene ids
+             :param fields: fields to return, a list of a comma-sep string
                             if fields=="all", all available fields are returned.
-             @param species: optionally, you can pass comma-separated species names
+             :param species: optionally, you can pass comma-separated species names
                               or taxonomy ids
-             @param filter: alias for fields
-             @param as_dataframe: if True, return object as dataframe.
-             @param df_index: if True (default), index dataframe by 'query', else index
-                    by number. Only applicable if as_dataframe=True.
+             :param email: optionally, pass your email to help us to track usage
+             :param filter: alias for fields
+             :param as_dataframe: if True, return object as DataFrame (requires Pandas).
+             :param df_index: if True (default), index returned DataFrame by 'query',
+                              otherwise, index by number. Only applicable if as_dataframe=True.
 
-          Ref: http://mygene.info/doc/annotation_service.html
+          :ref: http://mygene.info/doc/annotation_service.html for available
+                fields, extra *kwargs* and more.
         '''
         if isinstance(geneids, str_types):
             geneids = geneids.split(',')
@@ -219,22 +224,24 @@ class MyGeneInfo():
     def query(self, q, **kwargs):
         '''Return  the query result.
            This is a wrapper for GET query of "/query?q=<query>" service.
-            @param fields: fields to return, a list of a comma-sep string
+            :param fields: fields to return, a list of a comma-sep string
                             if fields=="all", all available fields are returned.
-            @param species: optionally, you can pass comma-separated species names
+            :param species: optionally, you can pass comma-separated species names
                               or taxonomy ids. Default: human,mouse,rat.
-            @param size:   the maximum number of results to return (with a cap
+            :param size:   the maximum number of results to return (with a cap
                               of 1000 at the moment). Default: 10.
-            @param skip:    the number of results to skip. Default: 0.
-            @param sort:    Prefix with "-" for descending order, otherwise in ascending order.
+            :param skip:    the number of results to skip. Default: 0.
+            :param sort:    Prefix with "-" for descending order, otherwise in ascending order.
                             Default: sort by matching scores in decending order.
-            @param entrezonly: if True, return only matching entrez genes, otherwise, including matching
+            :param entrezonly: if True, return only matching entrez genes, otherwise, including matching
                                  Ensemble-only genes (those have no matching entrez genes).
-            @param as_dataframe: if True, return object as dataframe.
-            @param df_index: if True (default), index dataframe by 'query', else index
-                   by number. Only applicable if as_dataframe=True.
+            :param email: optionally, pass your email to help us to track usage
+            :param as_dataframe: if True, return object as DataFrame (requires Pandas).
+            :param df_index: if True (default), index returned DataFrame by 'query',
+                             otherwise, index by number. Only applicable if as_dataframe=True.
 
-            Ref: http://mygene.info/doc/query_service.html
+            :ref: http://mygene.info/doc/query_service.html for available
+                  fields, extra *kwargs* and more.
         '''
         as_dataframe = kwargs.pop('as_dataframe', False)
         kwargs.update({'q': q})
@@ -254,22 +261,27 @@ class MyGeneInfo():
         '''Return the batch query result.
            This is a wrapper for POST query of "/query" service.
 
-            @param qterms: a list of query terms, or a string of comma-separated query terms.
-            @param scopes:  type of types of identifiers, either a list or a comma-separated fields to specify type of
+            :param qterms: a list of query terms, or a string of comma-separated query terms.
+            :param scopes:  type of types of identifiers, either a list or a comma-separated fields to specify type of
                            input qterms, e.g. "entrezgene", "entrezgene,symbol", ["ensemblgene", "symbol"]
                            refer to "http://mygene.info/doc/query_service.html#available_fields" for full list
                            of fields.
-            @param fields: fields to return, a list of a comma-sep string
+            :param fields: fields to return, a list of a comma-sep string
                             if fields=="all", all available fields are returned.
-            @param species: optionally, you can pass comma-separated species names
+            :param species: optionally, you can pass comma-separated species names
                               or taxonomy ids. Default: human,mouse,rat.
-            @param entrezonly:  if True, return only matching entrez genes, otherwise, including matching
+            :param entrezonly:  if True, return only matching entrez genes, otherwise, including matching
                                  Ensemble-only genes (those have no matching entrez genes).
 
-            @param returnall:   if True, return a dict of all related data, including dup. and missing qterms
-            @param verbose:     if True (default), print out infomation about dup and missing qterms
-            @param as_dataframe: if True, return object as dataframe.
-            Ref: http://mygene.info/doc/query_service.html
+            :param returnall:   if True, return a dict of all related data, including dup. and missing qterms
+            :param verbose:     if True (default), print out infomation about dup and missing qterms
+            :param email: optionally, pass your email to help us to track usage
+            :param as_dataframe: if True, return object as DataFrame (requires Pandas).
+            :param df_index: if True (default), index returned DataFrame by 'query',
+                             otherwise, index by number. Only applicable if as_dataframe=True.
+
+            :ref: http://mygene.info/doc/query_service.html for available
+                  fields, extra *kwargs* and more.
         '''
         if isinstance(qterms, str_types):
             qterms = qterms.split(',')
@@ -339,7 +351,8 @@ class MyGeneInfo():
             return out
 
     def findgenes(self, id_li, **kwargs):
-        ''' Deprecated! It's kept here as an alias of "querymany" method.'''
+        ''' .. deprecated:: 2.0.0 it's kept here as an alias of "querymany" method.
+        '''
         import warnings
         warnings.warn('Deprecated! Currently an alias of "querymany" method. Use "querymany" method directly.', DeprecationWarning)
         return self.querymany(id_li, **kwargs)
