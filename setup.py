@@ -8,7 +8,7 @@ def read(fname):
 
 setup(
     name="mygene",
-    version="2.1.0",
+    version="2.2.0",
     author="Chunlei Wu",
     author_email="cwu@scripps.edu",
     description="Python Client for MyGene.Info services.",
