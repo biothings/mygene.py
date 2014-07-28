@@ -1,6 +1,11 @@
 import unittest
 import sys
 import os.path
+try:
+    from pandas import DataFrame
+    pandas_avail = True
+except ImportError:
+    pandas_avail = False
 sys.path.insert(0, os.path.split(os.path.split(os.path.abspath(__file__))[0])[0])
 import mygene
 sys.stdout.write('"mygene {0}" loaded from "{1}"\n'.format(mygene.__version__, mygene.__file__))
@@ -10,6 +15,8 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
         self.mg = mygene.MyGeneInfo()
+        self.query_list1 = ['1007_s_at', '1053_at', '117_at', '121_at', '1255_g_at',
+                            '1294_at', '1316_at', '1320_at', '1405_i_at', '1431_at']
 
     def test_metadata(self):
         meta = self.mg.metadata
@@ -89,6 +96,23 @@ class TestSequenceFunctions(unittest.TestCase):
         qres = self.mg.findgenes([1017, '695', 'NA_TEST'], scopes='entrezgene', species=9606)
         self.assertEqual(len(qres), 3)
         self.assertEqual(qres[2], {"query": 'NA_TEST', "notfound": True})
+
+    def test_querymany_dataframe(self):
+        if not pandas_avail:
+            from nose.plugins.skip import SkipTest
+            raise SkipTest
+        qres = self.mg.querymany(self.query_list1, scopes='reporter', as_dataframe=True)
+        self.assertTrue(isinstance(qres, DataFrame))
+        self.assertTrue('name' in qres.columns)
+        self.assertEqual(set(self.query_list1), set(qres.index))
+
+    def test_querymany_step(self):
+        qres1 = self.mg.querymany(self.query_list1, scopes='reporter')
+        default_step = self.mg.step
+        self.mg.step = 3
+        qres2 = self.mg.querymany(self.query_list1, scopes='reporter')
+        self.mg.step = default_step
+        self.assertEqual(qres1, qres2)
 
 
 if __name__ == '__main__':
