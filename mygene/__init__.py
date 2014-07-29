@@ -358,7 +358,7 @@ class MyGeneInfo():
 
         .. Hint:: :py:meth:`querymany` is perfect for doing id mappings.
 
-        .. Hint:: just like :py:meth:`getgenes`, passing a large list of ids (>1000) to :py:meth:`querymany` is just fine.
+        .. Hint:: Just like :py:meth:`getgenes`, passing a large list of ids (>1000) to :py:meth:`querymany` is perfectly fine.
 
         '''
         if isinstance(qterms, str_types):

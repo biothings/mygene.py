@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
 .. py:module:: mygene
+.. autofunction:: alwayslist
 .. autoattribute:: metadata
 .. autoclass:: MyGeneInfo
     :members:
@@ -23,4 +24,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
