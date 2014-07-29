@@ -12,6 +12,9 @@ Requirements
 
     httplib2_ (install using "pip install httplib2")
 
+Optional dependencies
+======================
+    `pandas <http://pandas.pydata.org>`_ (install using "pip install pandas") is required for returning a list of gene objects as `DataFrame <http://pandas.pydata.org/pandas-docs/stable/dsintro.html#dataframe>`_.
 
 Installation
 =============
@@ -99,9 +102,30 @@ Usage
       'symbol': 'CYP17A1',
       'taxid': 9606}]
 
-
-    In [7]:  mg.query('cdk2', size=5)
+    In [7]: mg.getgenes([1017,1018,'ENSG00000148795'], as_dataframe=True)
     Out[7]:
+                      _id  entrezgene  \
+    query
+    1017             1017        1017
+    1018             1018        1018
+    ENSG00000148795  1586        1586
+
+                                                                  name   symbol  \
+    query
+    1017                                     cyclin-dependent kinase 2     CDK2
+    1018                                     cyclin-dependent kinase 3     CDK3
+    ENSG00000148795  cytochrome P450, family 17, subfamily A, polyp...  CYP17A1
+
+                     taxid
+    query
+    1017              9606
+    1018              9606
+    ENSG00000148795   9606
+
+    [3 rows x 5 columns]
+
+    In [8]:  mg.query('cdk2', size=5)
+    Out[8]:
     {'hits': [{'_id': '1017',
        '_score': 373.24667,
        'entrezgene': 1017,
@@ -136,8 +160,8 @@ Usage
      'took': 10,
      'total': 28}
 
-    In [8]: mg.query('reporter:1000_at')
-    Out[8]:
+    In [9]: mg.query('reporter:1000_at')
+    Out[9]:
     {'hits': [{'_id': '5595',
        '_score': 11.163337,
        'entrezgene': 5595,
@@ -148,8 +172,8 @@ Usage
      'took': 6,
      'total': 1}
 
-    In [9]: mg.query('symbol:cdk2', species='human')
-    Out[9]:
+    In [10]: mg.query('symbol:cdk2', species='human')
+    Out[10]:
     {'hits': [{'_id': '1017',
        '_score': 84.17707,
        'entrezgene': 1017,
@@ -160,25 +184,7 @@ Usage
      'took': 27,
      'total': 1}
 
-    In [10]: mg.querymany([1017, '695'], scopes='entrezgene', species='human')
-    querying 1-2... done.
-    Finished.
-    Out[10]:
-    [{'_id': '1017',
-      'entrezgene': 1017,
-      'name': 'cyclin-dependent kinase 2',
-      'query': '1017',
-      'symbol': 'CDK2',
-      'taxid': 9606},
-     {'_id': '695',
-      'entrezgene': 695,
-      'name': 'Bruton agammaglobulinemia tyrosine kinase',
-      'query': '695',
-      'symbol': 'BTK',
-      'taxid': 9606}]
-
-    In [11]: mg.querymany([1017, '695'], scopes='entrezgene', species=9606)
-    querying 1-2... done.
+    In [11]: mg.querymany([1017, '695'], scopes='entrezgene', species='human')
     Finished.
     Out[11]:
     [{'_id': '1017',
@@ -194,10 +200,40 @@ Usage
       'symbol': 'BTK',
       'taxid': 9606}]
 
-    In [12]: mg.querymany([1017, '695', 'NA_TEST'], scopes='entrezgene', species='human')
-    querying 1-3...
+    In [12]: mg.querymany([1017, '695'], scopes='entrezgene', species=9606)
     Finished.
     Out[12]:
+    [{'_id': '1017',
+      'entrezgene': 1017,
+      'name': 'cyclin-dependent kinase 2',
+      'query': '1017',
+      'symbol': 'CDK2',
+      'taxid': 9606},
+     {'_id': '695',
+      'entrezgene': 695,
+      'name': 'Bruton agammaglobulinemia tyrosine kinase',
+      'query': '695',
+      'symbol': 'BTK',
+      'taxid': 9606}]
+
+    In [13]: mg.querymany([1017, '695'], scopes='entrezgene', species=9606, as_dataframe=True)
+    Finished.
+    Out[13]:
+            _id  entrezgene                                       name symbol  \
+    query
+    1017   1017        1017                  cyclin-dependent kinase 2   CDK2
+    695     695         695  Bruton agammaglobulinemia tyrosine kinase    BTK
+
+           taxid
+    query
+    1017    9606
+    695     9606
+
+    [2 rows x 5 columns]
+
+    In [14]: mg.querymany([1017, '695', 'NA_TEST'], scopes='entrezgene', species='human')
+    Finished.
+    Out[14]:
     [{'_id': '1017',
       'entrezgene': 1017,
       'name': 'cyclin-dependent kinase 2',
