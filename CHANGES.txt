@@ -1,4 +1,4 @@
-v2.2.0 (2014/07/27)
+v2.2.0 (2014/07/29)
     Support returning gene hits as a Pandas DataFrame (if Pandas is available)
     Included "alwayslist" helper function
 
