@@ -177,7 +177,7 @@ class MyGeneInfo():
 
         :param geneid: entrez/ensembl gene id, entrez gene id can be either
                        a string or integer
-        :param fields: fields to return, a list or a comma-sep string.
+        :param fields: fields to return, a list or a comma-separated string.
                         If **fields="all"**, all available fields are returned
         :param species: optionally, you can pass comma-separated species names
                         or taxonomy ids
@@ -185,6 +185,7 @@ class MyGeneInfo():
         :param filter: alias for **fields** parameter
 
         :return: a gene object as a dictionary
+
         :ref: http://mygene.info/doc/annotation_service.html for available
              fields, extra *kwargs* and more.
 
@@ -219,7 +220,7 @@ class MyGeneInfo():
         This is a wrapper for POST query of "/gene" service.
 
         :param geneids: a list or comm-sep entrez/ensembl gene ids
-        :param fields: fields to return, a list or a comma-sep string.
+        :param fields: fields to return, a list or a comma-separated string.
                         If **fields="all"**, all available fields are returned
         :param species: optionally, you can pass comma-separated species names
                         or taxonomy ids
@@ -228,6 +229,8 @@ class MyGeneInfo():
         :param as_dataframe: if True, return object as DataFrame (requires Pandas).
         :param df_index: if True (default), index returned DataFrame by 'query',
                          otherwise, index by number. Only applicable if as_dataframe=True.
+
+        :return: a list of gene objects or a pandas DataFrame object (when **as_dataframe** is True)
 
         :ref: http://mygene.info/doc/annotation_service.html for available
                 fields, extra *kwargs* and more.
@@ -279,7 +282,7 @@ class MyGeneInfo():
         This is a wrapper for GET query of "/query?q=<query>" service.
 
         :param q: a query string, detailed query syntax `here <http://mygene.info/doc/query_service.html#query-syntax>`_
-        :param fields: fields to return, a list or a comma-sep string.
+        :param fields: fields to return, a list or a comma-separated string.
                         If **fields="all"**, all available fields are returned
         :param species: optionally, you can pass comma-separated species names
                         or taxonomy ids. Default: human,mouse,rat.
@@ -294,6 +297,8 @@ class MyGeneInfo():
         :param as_dataframe: if True, return object as DataFrame (requires Pandas).
         :param df_index: if True (default), index returned DataFrame by 'query',
                          otherwise, index by number. Only applicable if as_dataframe=True.
+
+        :return: a dictionary with returned gene hits or a pandas DataFrame object (when **as_dataframe** is True)
 
         :ref: http://mygene.info/doc/query_service.html for available
               fields, extra *kwargs* and more.
@@ -330,7 +335,7 @@ class MyGeneInfo():
                        input qterms, e.g. "entrezgene", "entrezgene,symbol", ["ensemblgene", "symbol"]
                        refer to "http://mygene.info/doc/query_service.html#available_fields" for full list
                        of fields.
-        :param fields: fields to return, a list or a comma-sep string.
+        :param fields: fields to return, a list or a comma-separated string.
                         If **fields="all"**, all available fields are returned
         :param species: optionally, you can pass comma-separated species names
                           or taxonomy ids. Default: human,mouse,rat.
@@ -343,6 +348,8 @@ class MyGeneInfo():
         :param as_dataframe: if True, return object as DataFrame (requires Pandas).
         :param df_index: if True (default), index returned DataFrame by 'query',
                          otherwise, index by number. Only applicable if as_dataframe=True.
+
+        :return: a list of gene objects or a pandas DataFrame object (when **as_dataframe** is True)
 
         :ref: http://mygene.info/doc/query_service.html for available
               fields, extra *kwargs* and more.
