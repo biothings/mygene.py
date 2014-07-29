@@ -332,8 +332,8 @@ class MyGeneInfo():
 
         :param qterms: a list of query terms, or a string of comma-separated query terms.
         :param scopes:  type of types of identifiers, either a list or a comma-separated fields to specify type of
-                       input qterms, e.g. "entrezgene", "entrezgene,symbol", ["ensemblgene", "symbol"]
-                       refer to "http://mygene.info/doc/query_service.html#available_fields" for full list
+                       input qterms, e.g. "entrezgene", "entrezgene,symbol", ["ensemblgene", "symbol"].
+                       Refer to `official MyGene.info docs <http://mygene.info/doc/query_service.html#available_fields>`_ for full list
                        of fields.
         :param fields: fields to return, a list or a comma-separated string.
                         If **fields="all"**, all available fields are returned
