@@ -42,6 +42,10 @@ Tutorial
 
 * `ID mapping using mygene module in Python <http://nbviewer.ipython.org/6771106>`_
 
+Documentation
+=============
+
+http://mygene-py.readthedocs.org/
 
 Usage
 =====
