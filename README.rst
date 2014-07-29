@@ -45,7 +45,7 @@ Tutorial
 Documentation
 =============
 
-http://mygene-py.readthedocs.org/
+    http://mygene-py.readthedocs.org/
 
 Usage
 =====

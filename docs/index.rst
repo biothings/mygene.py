@@ -3,13 +3,56 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. _MyGene.Info: http://mygene.info
+.. _httplib2: http://code.google.com/p/httplib2/
+
+
 Welcome to MyGene.py's documentation!
 =====================================
-
-Contents:
+MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene annotation data. It's designed with simplicity and performance emphasized. *mygene*, is an easy-to-use Python wrapper to access MyGene.Info_ services.
 
 .. toctree::
    :maxdepth: 2
+   index
+
+Requirements
+============
+    python >=2.6 (including python3)
+
+    httplib2_ (install using "pip install httplib2")
+
+Optional dependencies
+======================
+    `pandas <http://pandas.pydata.org>`_ (install using "pip install pandas") is required for returning a list of gene objects as `DataFrame <http://pandas.pydata.org/pandas-docs/stable/dsintro.html#dataframe>`_.
+
+Installation
+=============
+
+    Option 1
+          pip install mygene
+
+    Option 2
+          download/extract the source code and run::
+
+           python setup.py install
+
+    Option 3
+          install the latest code directly from the repository::
+
+            pip install -e hg+https://bitbucket.org/newgene/mygene#egg=mygene
+
+Version history
+===============
+
+    `CHANGES.txt <https://bitbucket.org/newgene/mygene/raw/tip/CHANGES.txt>`_
+
+Tutorial
+=========
+
+* `ID mapping using mygene module in Python <http://nbviewer.ipython.org/6771106>`_
+
+API
+======
 
 .. py:module:: mygene
 .. autofunction:: alwayslist
