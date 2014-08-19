@@ -94,7 +94,7 @@ class MyGeneInfo():
             df = df.set_index('query')
         return df
 
-    def _get(self, url, params={}):
+    def _get(self, url, params={}, none_on_404=False):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
         headers = {'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
@@ -106,6 +106,8 @@ class MyGeneInfo():
         con = con.decode("utf8")  # required in python3
         if debug:
             return _url, res, con
+        if none_on_404 and res.status == 404:
+            return None
         assert res.status == 200, (_url, res, con)
         if return_raw:
             return con
@@ -184,7 +186,7 @@ class MyGeneInfo():
         :param email: optionally, pass your email to help us to track usage
         :param filter: alias for **fields** parameter
 
-        :return: a gene object as a dictionary
+        :return: a gene object as a dictionary, or None if geneid is not valid.
 
         :ref: http://mygene.info/doc/annotation_service.html for available
              fields, extra *kwargs* and more.
@@ -207,7 +209,7 @@ class MyGeneInfo():
         if 'filter' in kwargs:
             kwargs['fields'] = self._format_list(kwargs['filter'])
         _url = self.url + '/gene/' + str(geneid)
-        return self._get(_url, kwargs)
+        return self._get(_url, kwargs, none_on_404=True)
 
     def _getgenes_inner(self, geneids, **kwargs):
         _kwargs = {'ids': self._format_list(geneids)}
