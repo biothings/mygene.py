@@ -299,6 +299,10 @@ class MyGeneInfo():
         :param as_dataframe: if True, return object as DataFrame (requires Pandas).
         :param df_index: if True (default), index returned DataFrame by 'query',
                          otherwise, index by number. Only applicable if as_dataframe=True.
+        :param fetch_all: if True, return a generator to all query results (unsorted).  This can provide a very fast return of
+                         all hits from a large query.
+                         Server requests are done in blocks of 1000 and yielded individually.  Each 1000 block of results
+                         must be yielded within 1 minute, otherwise the request will expire on the server side.
 
         :return: a dictionary with returned gene hits or a pandas DataFrame object (when **as_dataframe** is True)
 
@@ -316,11 +320,41 @@ class MyGeneInfo():
         '''
         as_dataframe = kwargs.pop('as_dataframe', False)
         kwargs.update({'q': q})
+        fetch_all = kwargs.get('fetch_all')
+        if fetch_all in [True, 1]:
+            return self._fetch_all(**kwargs)
         _url = self.url + '/query'
         out = self._get(_url, kwargs)
         if as_dataframe:
             out = self._as_dataframe(out, False)
         return out
+
+    def _fetch_all(self, **kwargs):
+        ''' Function that returns a generator to query results.  Assumes that 'q' is in kwargs.'''
+                # get the total number of hits and start the scroll_id
+        _url = self.url + '/query'
+        res = self._get(_url, kwargs)
+        try:
+            scroll_id = res['_scroll_id']
+            total_hits = int(res['total'])
+        except KeyError:
+            raise ScanError("Unable to open scroll.")
+        if total_hits == 0:
+            raise StopIteration
+        kwargs.pop('q', None)
+        kwargs.pop('fetch_all', None)
+        print("Fetching {} variant(s)...".format(total_hits))
+        while True:
+            # get next scroll results
+            kwargs.update({'scroll_id': scroll_id})
+            out = self._get(_url, kwargs)
+            if 'error' in out:
+                break
+            if '_warning' in out:
+                print(out['_warning'])
+            scroll_id = out.get('_scroll_id')
+            for hit in out['hits']:
+                yield hit
 
     def _querymany_inner(self, qterms, **kwargs):
         _kwargs = {'q': self._format_list(qterms)}
