@@ -143,7 +143,7 @@ class MyGeneInfo():
             _out = a_list     # a_list is already a comma separated string
         return _out
 
-    def _repeated_query(self, query_fn, query_li, verbose=True, **fn_kwargs):
+    def _repeated_query_old(self, query_fn, query_li, verbose=True, **fn_kwargs):
         step = min(self.step, self.max_query)
         if len(query_li) <= step:
             # No need to do series of batch queries, turn off verbose output
@@ -159,6 +159,24 @@ class MyGeneInfo():
             if verbose:
                 print("done.")
             if not is_last_loop and self.delay:
+                time.sleep(self.delay)
+
+    def _repeated_query(self, query_fn, query_li, verbose=True, **fn_kwargs):
+        '''run query_fn for input query_li in a batch (self.step).
+           return a generator of query_result in each batch.
+           input query_li can be a list/tuple/iterable
+        '''
+        step = min(self.step, self.max_query)
+        i = 0 
+        for batch, cnt in iter_n(query_li, step, with_cnt=True):
+            if verbose:
+                print("querying {0}-{1}...".format(i+1, cnt), end="")
+            i = cnt 
+            query_result = query_fn(batch, **fn_kwargs)
+            yield query_result
+            if verbose:
+                print("done.")
+            if self.delay:
                 time.sleep(self.delay)
 
     @property
