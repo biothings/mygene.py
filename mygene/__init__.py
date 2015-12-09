@@ -5,6 +5,7 @@ from __future__ import print_function
 import sys
 import time
 from itertools import islice
+from collections import Iterable
 
 import httplib2
 import json
@@ -265,7 +266,7 @@ class MyGeneInfo():
         '''Return the list of gene objects for the given list of geneids.
         This is a wrapper for POST query of "/gene" service.
 
-        :param geneids: a list or comm-sep entrez/ensembl gene ids
+        :param geneids: a list/tuple/iterable or comma-separated entrez/ensembl gene ids
         :param fields: fields to return, a list or a comma-separated string.
                         If **fields="all"**, all available fields are returned
         :param species: optionally, you can pass comma-separated species names
@@ -296,8 +297,9 @@ class MyGeneInfo():
         '''
         if isinstance(geneids, str_types):
             geneids = geneids.split(',')
-        if (not (isinstance(geneids, (list, tuple)) and len(geneids) > 0)):
-            raise ValueError('input "geneids" must be non-empty list or tuple.')
+        if (not (isinstance(geneids, (list, tuple, Iterable)))):
+            raise ValueError('input "geneids" must be a list, tuple or iterable.')
+
         if fields:
             kwargs['fields'] = self._format_list(fields)
         if 'filter' in kwargs:
@@ -410,7 +412,7 @@ class MyGeneInfo():
         '''Return the batch query result.
         This is a wrapper for POST query of "/query" service.
 
-        :param qterms: a list of query terms, or a string of comma-separated query terms.
+        :param qterms: a list/tuple/iterable of query terms, or a string of comma-separated query terms.
         :param scopes:  type of types of identifiers, either a list or a comma-separated fields to specify type of
                        input qterms, e.g. "entrezgene", "entrezgene,symbol", ["ensemblgene", "symbol"].
                        Refer to `official MyGene.info docs <http://mygene.info/doc/query_service.html#available_fields>`_ for full list
@@ -450,8 +452,8 @@ class MyGeneInfo():
         '''
         if isinstance(qterms, str_types):
             qterms = qterms.split(',')
-        if (not (isinstance(qterms, (list, tuple)) and len(qterms) > 0)):
-            raise ValueError('input "qterms" must be non-empty list or tuple.')
+        if (not (isinstance(qterms, (list, tuple, Iterable)))):
+            raise ValueError('input "qterms" must be a list, tuple or iterable.')
 
         if scopes:
             kwargs['scopes'] = self._format_list(scopes)
