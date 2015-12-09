@@ -8,7 +8,7 @@ def read(fname):
 
 setup(
     name="mygene",
-    version="2.2.0",
+    version="2.3.0",
     author="Chunlei Wu",
     author_email="cwu@scripps.edu",
     description="Python Client for MyGene.Info services.",
@@ -30,6 +30,6 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
     install_requires=[
-        'httplib2>=0.6',
+        'requests>=2.3.0',
     ],
 )
