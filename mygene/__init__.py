@@ -4,6 +4,8 @@ Python Client for MyGene.Info services
 from __future__ import print_function
 import sys
 import time
+from itertools import islice
+
 import httplib2
 import json
 try:
@@ -20,6 +22,11 @@ if sys.version_info[0] == 3:
 else:
     str_types = (str, unicode)
     from urllib import urlencode
+
+
+class ScanError(Exception):
+    # for errors in scan search type
+    pass
 
 
 def alwayslist(value):
@@ -59,6 +66,25 @@ def list_itemcnt(list):
         else:
             x[item] = 1
     return [(i, x[i]) for i in x]
+
+
+def iter_n(iterable, n, with_cnt=False):
+    '''
+    Iterate an iterator by chunks (of n)
+    if with_cnt is True, return (chunk, cnt) each time
+    '''
+    it = iter(iterable)
+    if with_cnt:
+        cnt = 0
+    while True:
+        chunk = tuple(islice(it, n))
+        if not chunk:
+            return
+        if with_cnt:
+            cnt += len(chunk)
+            yield (chunk, cnt)
+        else:
+            yield chunk
 
 
 class MyGeneInfo():
@@ -167,11 +193,11 @@ class MyGeneInfo():
            input query_li can be a list/tuple/iterable
         '''
         step = min(self.step, self.max_query)
-        i = 0 
+        i = 0
         for batch, cnt in iter_n(query_li, step, with_cnt=True):
             if verbose:
                 print("querying {0}-{1}...".format(i+1, cnt), end="")
-            i = cnt 
+            i = cnt
             query_result = query_fn(batch, **fn_kwargs)
             yield query_result
             if verbose:
@@ -349,7 +375,7 @@ class MyGeneInfo():
 
     def _fetch_all(self, **kwargs):
         ''' Function that returns a generator to query results.  Assumes that 'q' is in kwargs.'''
-                # get the total number of hits and start the scroll_id
+        # get the total number of hits and start the scroll_id
         _url = self.url + '/query'
         res = self._get(_url, kwargs)
         try:
