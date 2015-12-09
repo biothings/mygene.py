@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 .. _MyGene.Info: http://mygene.info
-.. _httplib2: http://code.google.com/p/httplib2/
+.. _requests: http://docs.python-requests.org/en/latest/
 
 
 Welcome to MyGene.py's documentation!
@@ -19,7 +19,7 @@ Requirements
 ============
     python >=2.6 (including python3)
 
-    httplib2_ (install using "pip install httplib2")
+    requests_ (install using "pip install requests")
 
 Optional dependencies
 ======================
