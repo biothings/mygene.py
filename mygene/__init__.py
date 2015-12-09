@@ -102,7 +102,7 @@ class MyGeneInfo():
         self.delay = 1
         self.step = 1000
         # raise requests.exceptions.HTTPError for status_code > 400
-        #   but not for 404 on getvariant
+        #   but not for 404 on getgene
         #   set to False to surpress the exceptions.
         self.raise_for_status = True
 
@@ -142,7 +142,7 @@ class MyGeneInfo():
     def _post(self, url, params):
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
-                   'user-agent': "Python-requests_myvariant.py/%s (gzip)" % requests.__version__}
+                   'user-agent': "Python-requests_mygene.py/%s (gzip)" % requests.__version__}
         res = requests.post(url, data=params, headers=headers)
         if self.raise_for_status:
             # raise requests.exceptions.HTTPError if not 200
