@@ -7,8 +7,8 @@ import time
 from itertools import islice
 from collections import Iterable
 
-import httplib2
-import json
+import requests
+
 try:
     from pandas import DataFrame
     df_avail = True
@@ -19,10 +19,8 @@ __version__ = '2.2.0'
 
 if sys.version_info[0] == 3:
     str_types = str
-    from urllib.parse import urlencode
 else:
     str_types = (str, unicode)
-    from urllib import urlencode
 
 
 class ScanError(Exception):
@@ -99,11 +97,14 @@ class MyGeneInfo():
         self.url = url
         if self.url[-1] == '/':
             self.url = self.url[:-1]
-        self.h = httplib2.Http()
         self.max_query = 1000
         # delay and step attributes are for batch queries.
         self.delay = 1
         self.step = 1000
+        # raise requests.exceptions.HTTPError for status_code > 400
+        #   but not for 404 on getvariant
+        #   set to False to surpress the exceptions.
+        self.raise_for_status = True
 
     def _as_dataframe(self, gene_obj, df_index=True):
         """
@@ -124,37 +125,32 @@ class MyGeneInfo():
     def _get(self, url, params={}, none_on_404=False):
         debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
-        headers = {'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
-        if params:
-            _url = url + '?' + urlencode(params)
-        else:
-            _url = url
-        res, con = self.h.request(_url, headers=headers)
-        con = con.decode("utf8")  # required in python3
+        headers = {'user-agent': "Python-requests_mygene.py/%s (gzip)" % requests.__version__}
+        res = requests.get(url, params=params, headers=headers)
         if debug:
-            return _url, res, con
-        if none_on_404 and res.status == 404:
+            return res
+        if none_on_404 and res.status_code == 404:
             return None
-        assert res.status == 200, (_url, res, con)
+        if self.raise_for_status:
+            # raise requests.exceptions.HTTPError if not 200
+            res.raise_for_status()
         if return_raw:
-            return con
+            return res.text
         else:
-            return json.loads(con)
+            return res.json()
 
     def _post(self, url, params):
-        debug = params.pop('debug', False)
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
-                   'user-agent': "Python-httplib2_mygene.py/%s (gzip)" % httplib2.__version__}
-        res, con = self.h.request(url, 'POST', body=urlencode(params), headers=headers)
-        con = con.decode("utf8")  # required in python3
-        if debug:
-            return url, res, con
-        assert res.status == 200, (url, res, con)
+                   'user-agent': "Python-requests_myvariant.py/%s (gzip)" % requests.__version__}
+        res = requests.post(url, data=params, headers=headers)
+        if self.raise_for_status:
+            # raise requests.exceptions.HTTPError if not 200
+            res.raise_for_status()
         if return_raw:
-            return con
+            return res
         else:
-            return json.loads(con)
+            return res.json()
 
     def _is_entrez_id(self, id):
         try:
