@@ -4,13 +4,13 @@ Intro
 MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene annotation data. It's designed with simplicity and performance emphasized. *mygene*, is an easy-to-use Python wrapper to access MyGene.Info_ services.
 
 .. _MyGene.Info: http://mygene.info
-.. _httplib2: http://code.google.com/p/httplib2/
+.. _requests: http://docs.python-requests.org/en/latest/
 
 Requirements
 ============
     python >=2.6 (including python3)
 
-    httplib2_ (install using "pip install httplib2")
+    requests_ (install using "pip install requests")
 
 Optional dependencies
 ======================
