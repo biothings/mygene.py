@@ -214,6 +214,29 @@ class MyGeneInfo():
         _url = self.url+'/metadata'
         return self._get(_url)
 
+    def get_fields(self, search_term=None):
+        ''' Wrapper for http://mygene.info/v2/metadata/fields
+            **search_term** is a case insensitive string to search for in available field names.
+            If not provided, all available fields will be returned.
+        Example:
+        >>> mv.get_fields()
+        >>> mv.get_fields("uniprot")
+        >>> mv.get_fields("refseq")
+        >>> mv.get_fields("kegg")
+        .. Hint:: This is useful to find out the field names you need to pass to **fields** parameter of other methods.
+        '''
+        _url = self.url + '/metadata/fields'
+        these_fields = self._get(_url)
+        if search_term:
+            ret = dict([(k, v) for (k, v) in these_fields.items() if search_term.lower() in k.lower()])
+        else:
+            ret = these_fields
+        for (k, v) in ret.items():
+            # Get rid of the notes column information
+            if "notes" in v:
+                del v['notes']
+        return ret
+
     def getgene(self, geneid, fields='symbol,name,taxid,entrezgene', **kwargs):
         '''Return the gene object for the give geneid.
         This is a wrapper for GET query of "/gene/<geneid>" service.
