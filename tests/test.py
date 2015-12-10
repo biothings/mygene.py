@@ -112,6 +112,8 @@ class TestSequenceFunctions(unittest.TestCase):
         self.mg.step = 3
         qres2 = self.mg.querymany(self.query_list1, scopes='reporter')
         self.mg.step = default_step
+        qres1.sort(key=lambda doc:doc['_id'])
+        qres2.sort(key=lambda doc:doc['_id'])
         self.assertEqual(qres1, qres2)
 
 
