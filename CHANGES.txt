@@ -1,3 +1,9 @@
+v2.3.0 (2015/12/10)
+    Return None when input geneid does not exist for getgene method.
+    Switched to using requests for GET and POST from httplib2.
+    New "get_fields" method to search for matching field names.
+    New "fetch_all" parameter for query method to retrieve large query.
+
 v2.2.0 (2014/07/29)
     Support returning gene hits as a Pandas DataFrame (if Pandas is available)
     Included "alwayslist" helper function
