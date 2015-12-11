@@ -215,14 +215,17 @@ class MyGeneInfo():
         return self._get(_url)
 
     def get_fields(self, search_term=None):
-        ''' Wrapper for http://mygene.info/v2/metadata/fields
-            **search_term** is a case insensitive string to search for in available field names.
-            If not provided, all available fields will be returned.
+        '''Wrapper for http://mygene.info/v2/metadata/fields
+           **search_term** is a case insensitive string to search for in available field names.
+           If not provided, all available fields will be returned.
+
         Example:
+
         >>> mv.get_fields()
         >>> mv.get_fields("uniprot")
         >>> mv.get_fields("refseq")
         >>> mv.get_fields("kegg")
+
         .. Hint:: This is useful to find out the field names you need to pass to **fields** parameter of other methods.
         '''
         _url = self.url + '/metadata/fields'
