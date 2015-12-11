@@ -215,9 +215,12 @@ class MyGeneInfo():
         return self._get(_url)
 
     def get_fields(self, search_term=None):
-        '''Wrapper for http://mygene.info/v2/metadata/fields
-           **search_term** is a case insensitive string to search for in available field names.
-           If not provided, all available fields will be returned.
+        '''Return all available fields can be return from MyGene.info services.
+
+        This is a wrapper for http://mygene.info/metadata/fields
+
+        :param search_term: an optional string to search (case insensitive) for matching field names.
+                            If not provided, all available fields will be returned.
 
         Example:
 
