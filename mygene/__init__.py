@@ -408,7 +408,7 @@ class MyGeneInfo():
             raise StopIteration
         kwargs.pop('q', None)
         kwargs.pop('fetch_all', None)
-        print("Fetching {} object(s)...".format(total_hits))
+        print("Fetching {0} object(s)...".format(total_hits))
         while True:
             # get next scroll results
             kwargs.update({'scroll_id': scroll_id})
