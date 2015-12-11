@@ -1,17 +1,19 @@
 import unittest
 import sys
 import os.path
+import types
 try:
     from pandas import DataFrame
     pandas_avail = True
 except ImportError:
     pandas_avail = False
 sys.path.insert(0, os.path.split(os.path.split(os.path.abspath(__file__))[0])[0])
+
 import mygene
 sys.stdout.write('"mygene {0}" loaded from "{1}"\n'.format(mygene.__version__, mygene.__file__))
 
 
-class TestSequenceFunctions(unittest.TestCase):
+class TestMyGenePy(unittest.TestCase):
 
     def setUp(self):
         self.mg = mygene.MyGeneInfo()
@@ -58,6 +60,14 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertTrue('hits' in qres)
         self.assertEqual(len(qres['hits']), 1)
         self.assertEqual(qres['hits'][0]['_id'], '12566')
+
+    def test_query_fetch_all(self):
+        qres = self.mg.query('_exists_:pdb')
+        total = qres['total']
+
+        qres = self.mg.query('_exists_:pdb', fetch_all=True)
+        self.assertTrue(isinstance(qres, types.GeneratorType))
+        self.assertEqual(total, len(list(qres)))
 
     def test_querymany(self):
         qres = self.mg.querymany([1017, '695'], verbose=False)
@@ -112,9 +122,17 @@ class TestSequenceFunctions(unittest.TestCase):
         self.mg.step = 3
         qres2 = self.mg.querymany(self.query_list1, scopes='reporter')
         self.mg.step = default_step
-        qres1.sort(key=lambda doc:doc['_id'])
-        qres2.sort(key=lambda doc:doc['_id'])
+        qres1.sort(key=lambda doc: doc['_id'])
+        qres2.sort(key=lambda doc: doc['_id'])
         self.assertEqual(qres1, qres2)
+
+    def test_get_fields(self):
+        fields = self.mg.get_fields()
+        self.assertTrue('uniprot' in fields.keys())
+        self.assertTrue('exons' in fields.keys())
+
+        fields = self.mg.get_fields('kegg')
+        self.assertTrue('pathway.kegg' in fields.keys())
 
 
 if __name__ == '__main__':
