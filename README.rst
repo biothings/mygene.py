@@ -252,7 +252,15 @@ Usage
       'taxid': 9606},
      {'notfound': True, 'query': 'NA_TEST'}]
 
+    # query all human kinases using fetch_all parameter:
+    In [15]: kinases = mg.query('name:kinase', species='human', fetch_all=True)
+    In [16]: kinases
+    Out [16]" <generator object _fetch_all at 0x7fec027d2eb0>
 
+    # kinases is a Python generator, now you can loop through it to get all 1073 hits:
+    In [16]: for gene in kinases:
+       ....:     print gene['_id'], gene['symbol']
+    Out [16]: <output omitted here>
 
 
 Contact
