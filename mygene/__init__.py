@@ -14,6 +14,12 @@ try:
     df_avail = True
 except:
     df_avail = False
+    
+try:
+    import requests_cache
+    caching_avail = True
+except:
+    caching_avail = False
 
 __version__ = '2.3.0'
 
@@ -93,7 +99,7 @@ class MyGeneInfo():
         >>> mg = MyGeneInfo()
 
     '''
-    def __init__(self, url='http://mygene.info/v2'):
+    def __init__(self, url='http://mygene.info/v3'):
         self.url = url
         if self.url[-1] == '/':
             self.url = self.url[:-1]
@@ -136,8 +142,12 @@ class MyGeneInfo():
             res.raise_for_status()
         if return_raw:
             return res.text
+        ret = res.json()
+        if 'from_cache' in vars(res):
+            ret['_from_cache'] = vars(res).get('from_cache')
         else:
-            return res.json()
+            ret['_from_cache'] = False
+        return ret
 
     def _post(self, url, params):
         return_raw = params.pop('return_raw', False)
@@ -149,8 +159,12 @@ class MyGeneInfo():
             res.raise_for_status()
         if return_raw:
             return res
+        ret = res.json()
+        if 'from_cache' in vars(res):
+            ret['_from_cache'] = vars(res).get('from_cache')
         else:
-            return res.json()
+            ret['_from_cache'] = False
+        return ret
 
     def _is_entrez_id(self, id):
         try:
@@ -213,6 +227,31 @@ class MyGeneInfo():
         '''
         _url = self.url+'/metadata'
         return self._get(_url)
+
+    def set_caching(self, cache_db='mygene_cache', **kwargs):
+        ''' Installs a local cache for all requests.
+            **cache_db** is the path to the local sqlite cache database.'''
+        if caching_avail:
+            requests_cache.install_cache(cache_name=cache_db, **kwargs)
+            self._cached = True
+        else:
+            print("Error: The requests_cache python module is required to use request caching.")
+            print("See - https://requests-cache.readthedocs.io/en/latest/user_guide.html#installation")
+        return
+
+    def stop_caching(self):
+        ''' Stop caching.'''
+        if self._cached and caching_avail:
+            requests_cache.uninstall_cache()
+            self._cached = False
+        return
+
+    def clear_cache(self):
+        ''' Clear the globally installed cache. '''
+        try:
+            requests_cache.clear()
+        except:
+            pass
 
     def get_fields(self, search_term=None):
         '''Return all available fields can be return from MyGene.info services.
@@ -401,7 +440,7 @@ class MyGeneInfo():
         return out
 
     def _fetch_all(self, **kwargs):
-        ''' Function that returns a generator to query results.  Assumes that 'q' is in kwargs.'''
+        ''' Function that returns a generator to results.  Assumes that 'q' is in kwargs.'''
         # get the total number of hits and start the scroll_id
         _url = self.url + '/query'
         res = self._get(_url, kwargs)
@@ -414,18 +453,18 @@ class MyGeneInfo():
             raise StopIteration
         kwargs.pop('q', None)
         kwargs.pop('fetch_all', None)
-        print("Fetching {0} object(s)...".format(total_hits))
+        print("Fetching {} variant(s)...".format(total_hits))
         while True:
+            for hit in res['hits']:
+                yield hit
             # get next scroll results
             kwargs.update({'scroll_id': scroll_id})
-            out = self._get(_url, kwargs)
-            if 'error' in out:
+            res = self._get(_url, kwargs)
+            if 'error' in res:
                 break
-            if '_warning' in out:
-                print(out['_warning'])
-            scroll_id = out.get('_scroll_id')
-            for hit in out['hits']:
-                yield hit
+            if '_warning' in res:
+                print(res['_warning'])
+            scroll_id = res.get('_scroll_id')
 
     def _querymany_inner(self, qterms, **kwargs):
         _kwargs = {'q': self._format_list(qterms)}
