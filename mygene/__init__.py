@@ -111,6 +111,7 @@ class MyGeneInfo():
         #   but not for 404 on getgene
         #   set to False to surpress the exceptions.
         self.raise_for_status = True
+        self._cached = False
 
     def _as_dataframe(self, gene_obj, df_index=True):
         """
@@ -128,8 +129,8 @@ class MyGeneInfo():
             df = df.set_index('query')
         return df
 
-    def _get(self, url, params={}, none_on_404=False):
-        debug = params.pop('debug', False)
+    def _get(self, url, params={}, none_on_404=False, verbose=True):
+        debug = params.pop('debug_get', False)
         return_raw = params.pop('return_raw', False)
         headers = {'user-agent': "Python-requests_mygene.py/%s (gzip)" % requests.__version__}
         res = requests.get(url, params=params, headers=headers)
@@ -143,13 +144,11 @@ class MyGeneInfo():
         if return_raw:
             return res.text
         ret = res.json()
-        if 'from_cache' in vars(res):
-            ret['_from_cache'] = vars(res).get('from_cache')
-        else:
-            ret['_from_cache'] = False
+        if verbose and self._cached and vars(res).get('from_cache', False):
+            print('\nReturning cached result for "{}"'.format(url))
         return ret
 
-    def _post(self, url, params):
+    def _post(self, url, params, verbose=True):
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
                    'user-agent': "Python-requests_mygene.py/%s (gzip)" % requests.__version__}
@@ -160,10 +159,8 @@ class MyGeneInfo():
         if return_raw:
             return res
         ret = res.json()
-        if 'from_cache' in vars(res):
-            ret['_from_cache'] = vars(res).get('from_cache')
-        else:
-            ret['_from_cache'] = False
+        if verbose and self._cached and vars(res).get('from_cache', False):
+            print('\nReturning cached result for "{}"'.format(url))
         return ret
 
     def _is_entrez_id(self, id):
@@ -216,8 +213,7 @@ class MyGeneInfo():
             if self.delay:
                 time.sleep(self.delay)
 
-    @property
-    def metadata(self):
+    def metadata(self, verbose=True, **kwargs):
         '''Return a dictionary of MyGene.info metadata.
 
         Example:
@@ -226,13 +222,13 @@ class MyGeneInfo():
 
         '''
         _url = self.url+'/metadata'
-        return self._get(_url)
+        return self._get(_url, params=kwargs, verbose=verbose)
 
     def set_caching(self, cache_db='mygene_cache', **kwargs):
         ''' Installs a local cache for all requests.
             **cache_db** is the path to the local sqlite cache database.'''
         if caching_avail:
-            requests_cache.install_cache(cache_name=cache_db, **kwargs)
+            requests_cache.install_cache(cache_name=cache_db, allowable_methods=('GET','POST'), **kwargs)
             self._cached = True
         else:
             print("Error: The requests_cache python module is required to use request caching.")
@@ -253,7 +249,7 @@ class MyGeneInfo():
         except:
             pass
 
-    def get_fields(self, search_term=None):
+    def get_fields(self, search_term=None, verbose=True):
         '''Return all available fields can be return from MyGene.info services.
 
         This is a wrapper for http://mygene.info/metadata/fields
@@ -271,11 +267,11 @@ class MyGeneInfo():
         .. Hint:: This is useful to find out the field names you need to pass to **fields** parameter of other methods.
         '''
         _url = self.url + '/metadata/fields'
-        these_fields = self._get(_url)
         if search_term:
-            ret = dict([(k, v) for (k, v) in these_fields.items() if search_term.lower() in k.lower()])
+            params = {'search': search_term}
         else:
-            ret = these_fields
+            params = {}        
+        ret = self._get(_url, params=params, verbose=verbose)
         for (k, v) in ret.items():
             # Get rid of the notes column information
             if "notes" in v:
@@ -313,18 +309,19 @@ class MyGeneInfo():
                   notation for nested data structure as well, e.g. you can pass "refseq.rna" or
                   "pathway.kegg".
         '''
+        verbose = kwargs.pop('verbose', True)
         if fields:
             kwargs['fields'] = self._format_list(fields)
         if 'filter' in kwargs:
             kwargs['fields'] = self._format_list(kwargs['filter'])
         _url = self.url + '/gene/' + str(geneid)
-        return self._get(_url, kwargs, none_on_404=True)
+        return self._get(_url, kwargs, none_on_404=True, verbose=verbose)
 
-    def _getgenes_inner(self, geneids, **kwargs):
+    def _getgenes_inner(self, geneids, verbose=True, **kwargs):
         _kwargs = {'ids': self._format_list(geneids)}
         _kwargs.update(kwargs)
         _url = self.url + '/gene'
-        return self._post(_url, _kwargs)
+        return self._post(_url, _kwargs, verbose=verbose)
 
     def getgenes(self, geneids, fields='symbol,name,taxid,entrezgene', **kwargs):
         '''Return the list of gene objects for the given list of geneids.
@@ -376,7 +373,7 @@ class MyGeneInfo():
         if return_raw:
             as_dataframe = False
 
-        query_fn = lambda geneids: self._getgenes_inner(geneids, **kwargs)
+        query_fn = lambda geneids: self._getgenes_inner(geneids, verbose=verbose, **kwargs)
         out = []
         for hits in self._repeated_query(query_fn, geneids, verbose=verbose):
             if return_raw:
@@ -428,49 +425,53 @@ class MyGeneInfo():
         >>> mg.query('q=chrX:151073054-151383976', species=9606)
 
         '''
+        verbose = kwargs.pop('verbose', True)
         as_dataframe = kwargs.pop('as_dataframe', False)
         kwargs.update({'q': q})
         fetch_all = kwargs.get('fetch_all')
         if fetch_all in [True, 1]:
-            return self._fetch_all(**kwargs)
+            return self._fetch_all(verbose=verbose, **kwargs)
         _url = self.url + '/query'
-        out = self._get(_url, kwargs)
+        out = self._get(_url, kwargs, verbose=verbose)
         if as_dataframe:
             out = self._as_dataframe(out, False)
         return out
 
-    def _fetch_all(self, **kwargs):
+    def _fetch_all(self, verbose=True, **kwargs):
         ''' Function that returns a generator to results.  Assumes that 'q' is in kwargs.'''
         # get the total number of hits and start the scroll_id
         _url = self.url + '/query'
-        res = self._get(_url, kwargs)
-        try:
-            scroll_id = res['_scroll_id']
-            total_hits = int(res['total'])
-        except KeyError:
-            raise ScanError("Unable to open scroll.")
-        if total_hits == 0:
-            raise StopIteration
-        kwargs.pop('q', None)
-        kwargs.pop('fetch_all', None)
-        print("Fetching {} variant(s)...".format(total_hits))
-        while True:
-            for hit in res['hits']:
-                yield hit
-            # get next scroll results
-            kwargs.update({'scroll_id': scroll_id})
-            res = self._get(_url, kwargs)
-            if 'error' in res:
+        # function to get the next batch of results, automatically disables cache if we are caching
+        def _batch():
+            if caching_avail and self._cached:
+                self._cached = False
+                with requests_cache.disabled():
+                    ret = self._get(_url, params=kwargs, verbose=verbose)
+                self._cached = True
+            else:
+                ret = self._get(_url, params=kwargs, verbose=verbose)
+            return ret
+        batch = _batch()
+        if verbose:
+            print("Fetching {} genes(s) . . .".format(batch['total']))
+        for key in ['q', 'fetch_all']:
+            kwargs.pop(key)
+        while not batch.get('error', '').startswith('No results to return.'):
+            if 'error' in batch:
+                print(batch['error'])
                 break
-            if '_warning' in res:
-                print(res['_warning'])
-            scroll_id = res.get('_scroll_id')
+            if '_warning' in batch and verbose:
+                print(batch['_warning'])
+            for hit in batch['hits']:
+                yield hit
+            kwargs.update({'scroll_id': batch['_scroll_id']})
+            batch = _batch()
 
-    def _querymany_inner(self, qterms, **kwargs):
+    def _querymany_inner(self, qterms, verbose=True, **kwargs):
         _kwargs = {'q': self._format_list(qterms)}
         _kwargs.update(kwargs)
         _url = self.url + '/query'
-        return self._post(_url, _kwargs)
+        return self._post(_url, params=_kwargs, verbose=verbose)
 
     def querymany(self, qterms, scopes=None, **kwargs):
         '''Return the batch query result.
@@ -541,7 +542,7 @@ class MyGeneInfo():
         li_missing = []
         li_dup = []
         li_query = []
-        query_fn = lambda qterms: self._querymany_inner(qterms, **kwargs)
+        query_fn = lambda qterms: self._querymany_inner(qterms, verbose=verbose, **kwargs)
         for hits in self._repeated_query(query_fn, qterms, verbose=verbose):
             if return_raw:
                 out.append(hits)   # hits is the raw response text
