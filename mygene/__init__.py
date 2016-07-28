@@ -3,6 +3,7 @@ Python Client for MyGene.Info services
 '''
 from __future__ import print_function
 import sys
+import os
 import time
 from itertools import islice
 from collections import Iterable
@@ -134,34 +135,32 @@ class MyGeneInfo():
         return_raw = params.pop('return_raw', False)
         headers = {'user-agent': "Python-requests_mygene.py/%s (gzip)" % requests.__version__}
         res = requests.get(url, params=params, headers=headers)
+        from_cache = getattr(res, 'from_cache', False)
         if debug:
-            return res
+            return from_cache, res
         if none_on_404 and res.status_code == 404:
-            return None
+            return from_cache, None
         if self.raise_for_status:
             # raise requests.exceptions.HTTPError if not 200
             res.raise_for_status()
         if return_raw:
-            return res.text
+            return from_cache, res.text
         ret = res.json()
-        if verbose and self._cached and vars(res).get('from_cache', False):
-            print('\nReturning cached result for "{}"'.format(url))
-        return ret
+        return from_cache, ret
 
     def _post(self, url, params, verbose=True):
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
                    'user-agent': "Python-requests_mygene.py/%s (gzip)" % requests.__version__}
         res = requests.post(url, data=params, headers=headers)
+        from_cache = getattr(res, 'from_cache', False)
         if self.raise_for_status:
             # raise requests.exceptions.HTTPError if not 200
             res.raise_for_status()
         if return_raw:
-            return res
+            return from_cache, res
         ret = res.json()
-        if verbose and self._cached and vars(res).get('from_cache', False):
-            print('\nReturning cached result for "{}"'.format(url))
-        return ret
+        return from_cache, ret
 
     def _is_entrez_id(self, id):
         try:
@@ -206,12 +205,18 @@ class MyGeneInfo():
             if verbose:
                 print("querying {0}-{1}...".format(i+1, cnt), end="")
             i = cnt
-            query_result = query_fn(batch, **fn_kwargs)
+            from_cache, query_result = query_fn(batch, **fn_kwargs)
             yield query_result
             if verbose:
-                print("done.")
+                cache_str = " {0}".format(self._from_cache_notification) if from_cache else ""
+                print("done.{0}".format(cache_str))
             if self.delay:
                 time.sleep(self.delay)
+
+    @property
+    def _from_cache_notification(self):
+        ''' Notification to alert user that a cached result is being returned.'''
+        return "[ from cache ]"
 
     def metadata(self, verbose=True, **kwargs):
         '''Return a dictionary of MyGene.info metadata.
@@ -222,14 +227,19 @@ class MyGeneInfo():
 
         '''
         _url = self.url+'/metadata'
-        return self._get(_url, params=kwargs, verbose=verbose)
-
-    def set_caching(self, cache_db='mygene_cache', **kwargs):
+        from_cache, ret = self._get(_url, params=kwargs, verbose=verbose)
+        if verbose and from_cache:
+            print(self._from_cache_notification)
+        return ret
+    
+    def set_caching(self, cache_db='mygene_cache', verbose=True, **kwargs):
         ''' Installs a local cache for all requests.
             **cache_db** is the path to the local sqlite cache database.'''
         if caching_avail:
             requests_cache.install_cache(cache_name=cache_db, allowable_methods=('GET','POST'), **kwargs)
             self._cached = True
+            if verbose:
+                print('[ Future queries will be cached in "{0}" ]'.format(os.path.abspath(cache_db + '.sqlite')))    
         else:
             print("Error: The requests_cache python module is required to use request caching.")
             print("See - https://requests-cache.readthedocs.io/en/latest/user_guide.html#installation")
@@ -271,11 +281,13 @@ class MyGeneInfo():
             params = {'search': search_term}
         else:
             params = {}        
-        ret = self._get(_url, params=params, verbose=verbose)
+        from_cache, ret = self._get(_url, params=params, verbose=verbose)
         for (k, v) in ret.items():
             # Get rid of the notes column information
             if "notes" in v:
                 del v['notes']
+        if verbose and from_cache:
+            print(self._from_cache_notification)
         return ret
 
     def getgene(self, geneid, fields='symbol,name,taxid,entrezgene', **kwargs):
@@ -315,7 +327,10 @@ class MyGeneInfo():
         if 'filter' in kwargs:
             kwargs['fields'] = self._format_list(kwargs['filter'])
         _url = self.url + '/gene/' + str(geneid)
-        return self._get(_url, kwargs, none_on_404=True, verbose=verbose)
+        from_cache, ret = self._get(_url, kwargs, none_on_404=True, verbose=verbose)
+        if verbose and from_cache:
+            print(self._from_cache_notification)
+        return ret
 
     def _getgenes_inner(self, geneids, verbose=True, **kwargs):
         _kwargs = {'ids': self._format_list(geneids)}
@@ -432,7 +447,9 @@ class MyGeneInfo():
         if fetch_all in [True, 1]:
             return self._fetch_all(verbose=verbose, **kwargs)
         _url = self.url + '/query'
-        out = self._get(_url, kwargs, verbose=verbose)
+        from_cache, out = self._get(_url, kwargs, verbose=verbose)
+        if verbose and from_cache:
+            print(self._from_cache_notification)
         if as_dataframe:
             out = self._as_dataframe(out, False)
         return out
@@ -446,10 +463,10 @@ class MyGeneInfo():
             if caching_avail and self._cached:
                 self._cached = False
                 with requests_cache.disabled():
-                    ret = self._get(_url, params=kwargs, verbose=verbose)
+                    from_cache, ret = self._get(_url, params=kwargs, verbose=verbose)
                 self._cached = True
             else:
-                ret = self._get(_url, params=kwargs, verbose=verbose)
+                from_cache, ret = self._get(_url, params=kwargs, verbose=verbose)
             return ret
         batch = _batch()
         if verbose:

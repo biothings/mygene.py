@@ -170,7 +170,7 @@ class TestMyGenePy(unittest.TestCase):
             finally:
                 sys.stdout = current_stdout
 
-            return ('Returning cached result' in output, r)
+            return ('[ from cache ]' in output, r)
 
         from_cache, pre_cache_r = _cache_request(_getgene)
         self.assertFalse(from_cache)
