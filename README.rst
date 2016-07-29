@@ -1,3 +1,6 @@
+.. image:: https://badge.fury.io/py/mygene.svg
+    :target: https://pypi.python.org/pypi/mygene
+    
 Intro
 =====
 
