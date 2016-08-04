@@ -15,14 +15,14 @@ try:
     df_avail = True
 except:
     df_avail = False
-    
+
 try:
     import requests_cache
     caching_avail = True
 except:
     caching_avail = False
 
-__version__ = '2.3.0'
+__version__ = '3.0.0'
 
 if sys.version_info[0] == 3:
     str_types = str
@@ -231,7 +231,7 @@ class MyGeneInfo():
         if verbose and from_cache:
             print(self._from_cache_notification)
         return ret
-    
+
     def set_caching(self, cache_db='mygene_cache', verbose=True, **kwargs):
         ''' Installs a local cache for all requests.
             **cache_db** is the path to the local sqlite cache database.'''
@@ -239,7 +239,7 @@ class MyGeneInfo():
             requests_cache.install_cache(cache_name=cache_db, allowable_methods=('GET','POST'), **kwargs)
             self._cached = True
             if verbose:
-                print('[ Future queries will be cached in "{0}" ]'.format(os.path.abspath(cache_db + '.sqlite')))    
+                print('[ Future queries will be cached in "{0}" ]'.format(os.path.abspath(cache_db + '.sqlite')))
         else:
             print("Error: The requests_cache python module is required to use request caching.")
             print("See - https://requests-cache.readthedocs.io/en/latest/user_guide.html#installation")
@@ -280,7 +280,7 @@ class MyGeneInfo():
         if search_term:
             params = {'search': search_term}
         else:
-            params = {}        
+            params = {}
         from_cache, ret = self._get(_url, params=params, verbose=verbose)
         for (k, v) in ret.items():
             # Get rid of the notes column information
@@ -470,7 +470,7 @@ class MyGeneInfo():
             return ret
         batch = _batch()
         if verbose:
-            print("Fetching {} genes(s) . . .".format(batch['total']))
+            print("Fetching {0} genes(s) . . .".format(batch['total']))
         for key in ['q', 'fetch_all']:
             kwargs.pop(key)
         while not batch.get('error', '').startswith('No results to return.'):
