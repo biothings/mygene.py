@@ -133,7 +133,7 @@ class MyGeneInfo():
     def _get(self, url, params={}, none_on_404=False, verbose=True):
         debug = params.pop('debug_get', False)
         return_raw = params.pop('return_raw', False)
-        headers = {'user-agent': "Python-requests_mygene.py/%s (gzip)" % requests.__version__}
+        headers = {'user-agent': "mygene.py/%s python-requests/%s" % (__version__, requests.__version__)}
         res = requests.get(url, params=params, headers=headers)
         from_cache = getattr(res, 'from_cache', False)
         if debug:
@@ -151,7 +151,7 @@ class MyGeneInfo():
     def _post(self, url, params, verbose=True):
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
-                   'user-agent': "Python-requests_mygene.py/%s (gzip)" % requests.__version__}
+                   'user-agent': "mygene.py/%s python-requests/%s (gzip)" % (__version__, requests.__version__}
         res = requests.post(url, data=params, headers=headers)
         from_cache = getattr(res, 'from_cache', False)
         if self.raise_for_status:
