@@ -1,0 +1,9 @@
+*.pyc
+*.bak
+.tox
+dist
+build
+mygene.egg-info
+docs/_build
+__pycache__
+.DS_Store
