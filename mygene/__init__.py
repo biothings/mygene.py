@@ -151,7 +151,7 @@ class MyGeneInfo():
     def _post(self, url, params, verbose=True):
         return_raw = params.pop('return_raw', False)
         headers = {'content-type': 'application/x-www-form-urlencoded',
-                   'user-agent': "mygene.py/%s python-requests/%s (gzip)" % (__version__, requests.__version__}
+                   'user-agent': "mygene.py/%s python-requests/%s" % (__version__, requests.__version__)}
         res = requests.post(url, data=params, headers=headers)
         from_cache = getattr(res, 'from_cache', False)
         if self.raise_for_status:
@@ -236,7 +236,7 @@ class MyGeneInfo():
         ''' Installs a local cache for all requests.
             **cache_db** is the path to the local sqlite cache database.'''
         if caching_avail:
-            requests_cache.install_cache(cache_name=cache_db, allowable_methods=('GET','POST'), **kwargs)
+            requests_cache.install_cache(cache_name=cache_db, allowable_methods=('GET', 'POST'), **kwargs)
             self._cached = True
             if verbose:
                 print('[ Future queries will be cached in "{0}" ]'.format(os.path.abspath(cache_db + '.sqlite')))
@@ -458,6 +458,7 @@ class MyGeneInfo():
         ''' Function that returns a generator to results.  Assumes that 'q' is in kwargs.'''
         # get the total number of hits and start the scroll_id
         _url = self.url + '/query'
+
         # function to get the next batch of results, automatically disables cache if we are caching
         def _batch():
             if caching_avail and self._cached:
@@ -468,6 +469,7 @@ class MyGeneInfo():
             else:
                 from_cache, ret = self._get(_url, params=kwargs, verbose=verbose)
             return ret
+
         batch = _batch()
         if verbose:
             print("Fetching {0} genes(s) . . .".format(batch['total']))
