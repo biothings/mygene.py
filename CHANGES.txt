@@ -1,21 +1,26 @@
-v2.3.0 (2015/12/10)
+v3.0.0 (2016/08/09):
+    Migrated to use MyGene.info v3 API (For API changes, see here: http://docs.mygene.info/en/latest/doc/migration_from_v2.html). 
+    Added caching functions (using requests-cache) for all query types except when using "fetch_all".  Can turn request caching on with set_caching(), off with stop_caching().  The cache can be cleared with clear_cache().
+    Make "fetch_all" compatible with Elasticsearch v2.x scroll changes.
+
+v2.3.0 (2015/12/10):
     Return None when input geneid does not exist for getgene method.
     Switched to using requests for GET and POST from httplib2.
     New "get_fields" method to search for matching field names.
     New "fetch_all" parameter for query method to retrieve large query.
 
-v2.2.0 (2014/07/29)
+v2.2.0 (2014/07/29):
     Support returning gene hits as a Pandas DataFrame (if Pandas is available)
     Included "alwayslist" helper function
 
-v2.1.0 (2014/01/08)
+v2.1.0 (2014/01/08):
     Python3 support.
     Python2 support on v2.6 and up.
 
-v2.0.1 (2013/09/27)
+v2.0.1 (2013/09/27):
     "fields" parameter in "querymany" method now accepts a list as well, besides a comma-separated string.
 
-v2.0.0 (2013/07/08)
+v2.0.0 (2013/07/08):
     Migrated to use MyGene.info v2 API.
     With the support of v2 API, "query" and "querymany" methods now both support "fields" parameter to return user-specified fields for gene hits.
     "filter" parameter is replaced by "fields", "filter" is still kept for back-compatibility.
@@ -23,7 +28,7 @@ v2.0.0 (2013/07/08)
     "getgenes" and "querymany" methods are both support very long input list. It splits input into multiple batch queries with 1000 query terms as one batch, and concatenate the result automatically.
     "findgenes" method is deprecated now, still kept as an alias of "querymany" method.
 
-v1.0.0 (2013/06/18)
+v1.0.0 (2013/06/18):
     Switched default MyGene.info endpoint to "/v1" (prepare for "/v2" migration)
     Mark the version as v1.0.0
 
