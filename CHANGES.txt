@@ -1,7 +1,7 @@
-v3.0.0 (2016/08/09):
-    Migrated to use MyGene.info v3 API (For API changes, see here: http://docs.mygene.info/en/latest/doc/migration_from_v2.html). 
+v3.0.0 (2016/08/10):
+    Migrated to use MyGene.info v3 API (For API changes, see here: http://docs.mygene.info/en/latest/doc/migration_from_v2.html).
     Added caching functions (using requests-cache) for all query types except when using "fetch_all".  Can turn request caching on with set_caching(), off with stop_caching().  The cache can be cleared with clear_cache().
-    Make "fetch_all" compatible with Elasticsearch v2.x scroll changes.
+    Made "fetch_all" feature compatible with Elasticsearch v2.x scroll changes.
 
 v2.3.0 (2015/12/10):
     Return None when input geneid does not exist for getgene method.
