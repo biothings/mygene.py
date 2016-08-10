@@ -1,6 +1,15 @@
 .. image:: https://badge.fury.io/py/mygene.svg
     :target: https://pypi.python.org/pypi/mygene
 
+.. image:: https://img.shields.io/pypi/pyversions/mygene.svg
+    :target: https://pypi.python.org/pypi/mygene
+
+.. image:: https://img.shields.io/pypi/format/mygene.svg
+    :target: https://pypi.python.org/pypi/mygene
+
+.. image:: https://img.shields.io/pypi/status/mygene.svg
+    :target: https://pypi.python.org/pypi/mygene
+
 Intro
 =====
 
