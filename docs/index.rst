@@ -39,12 +39,12 @@ Installation
     Option 3
           install the latest code directly from the repository::
 
-            pip install -e hg+https://bitbucket.org/newgene/mygene#egg=mygene
+            pip install -e git+https://github.com/sulab/mygene.py#egg=mygene
 
 Version history
 ===============
 
-    `CHANGES.txt <https://bitbucket.org/newgene/mygene/raw/tip/CHANGES.txt>`_
+    `CHANGES.txt <https://raw.githubusercontent.com/SuLab/mygene.py/master/CHANGES.txt>`_
 
 Tutorial
 =========
