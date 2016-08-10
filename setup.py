@@ -14,7 +14,7 @@ setup(
     description="Python Client for MyGene.Info services.",
     license="BSD",
     keywords="biology gene annotation web service client api",
-    url="https://github.com/suLab/mygene.py",
+    url="https://github.com/sulab/mygene.py",
     packages=['mygene'],
     long_description=read('README.rst'),
     classifiers=[
