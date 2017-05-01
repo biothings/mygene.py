@@ -39,7 +39,7 @@ Installation
     Option 3
           install the latest code directly from the repository::
 
-            pip install -e git+https://github.com/sulab/mygene.py#egg=mygene
+            pip install -e git+https://github.com/biothings/mygene.py#egg=mygene
 
 Version history
 ===============
