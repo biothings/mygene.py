@@ -305,7 +305,7 @@ class MyGeneInfo():
 
         :return: a gene object as a dictionary, or None if geneid is not valid.
 
-        :ref: http://mygene.info/doc/annotation_service.html for available
+        :ref: http://docs.mygene.info/en/latest/doc/data.html for available
              fields, extra *kwargs* and more.
 
         Example:
