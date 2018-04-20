@@ -38,5 +38,6 @@ setup(
     ],
     install_requires=[
         'requests>=2.3.0',
+        'biothings_client',
     ],
 )
