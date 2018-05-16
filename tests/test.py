@@ -21,6 +21,18 @@ sys.path.insert(0, os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
 import mygene
 sys.stdout.write('"mygene {0}" loaded from "{1}"\n'.format(mygene.__version__, mygene.__file__))
 
+def descore(hit):
+    ''' Pops the _score from a hit or hit list - _score can vary slightly between runs causing 
+        tests to fail.  ''' 
+    if isinstance(hit, list):
+        res = []
+        for o in hit:
+            o.pop('_score', None)
+            res.append(o)
+        return res
+    else:
+        hit.pop('_score', None)
+        return hit
 
 class TestMyGenePy(unittest.TestCase):
 
@@ -109,7 +121,7 @@ class TestMyGenePy(unittest.TestCase):
         qres2 = self.mg.findgenes([1017, 'CDK2'], scopes='entrezgene,symbol', fields='uniprot,unigene', species=9606, verbose=False)
         self.assertEqual(len(qres2), 2)
 
-        self.assertEqual(qres1, qres2)
+        self.assertEqual(descore(qres1), descore(qres2))
 
     def test_querymany_notfound(self):
         qres = self.mg.findgenes([1017, '695', 'NA_TEST'], scopes='entrezgene', species=9606)
@@ -131,8 +143,8 @@ class TestMyGenePy(unittest.TestCase):
         self.mg.step = 3
         qres2 = self.mg.querymany(self.query_list1, scopes='reporter')
         self.mg.step = default_step
-        qres1.sort(key=lambda doc: doc['_id'])
-        qres2.sort(key=lambda doc: doc['_id'])
+        qres1 = descore(sorted(qres1, key=lambda doc: doc['_id']))
+        qres2 = descore(sorted(qres2, key=lambda doc: doc['_id']))
         self.assertEqual(qres1, qres2)
 
     def test_get_fields(self):
