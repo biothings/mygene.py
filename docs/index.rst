@@ -55,10 +55,9 @@ API
 ======
 
 .. py:module:: mygene
-.. autofunction:: alwayslist
-.. autoattribute:: metadata
 .. autoclass:: MyGeneInfo
     :members:
+    :inherited-members:
 
 
 Indices and tables
