@@ -55,6 +55,7 @@ API
 ======
 
 .. py:module:: mygene
+.. autofunction:: alwayslist
 .. autoclass:: MyGeneInfo
     :members:
     :inherited-members:
