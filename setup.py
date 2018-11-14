@@ -37,7 +37,6 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
     install_requires=[
-        'requests>=2.3.0',
-        'biothings_client',
+        'biothings_client'
     ],
 )
