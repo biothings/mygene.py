@@ -22,8 +22,8 @@ import mygene
 sys.stdout.write('"mygene {0}" loaded from "{1}"\n'.format(mygene.__version__, mygene.__file__))
 
 def descore(hit):
-    ''' Pops the _score from a hit or hit list - _score can vary slightly between runs causing 
-        tests to fail.  ''' 
+    ''' Pops the _score from a hit or hit list - _score can vary slightly between runs causing
+        tests to fail.  '''
     if isinstance(hit, list):
         res = []
         for o in hit:
@@ -51,7 +51,7 @@ class TestMyGenePy(unittest.TestCase):
         self.assertEqual(g['_id'], "1017")
         self.assertEqual(g['symbol'], 'CDK2')
 
-    def test_getgene_with_filter(self):
+    def test_getgene_with_fields(self):
         g = self.mg.getgene("1017", "name,symbol,refseq")
         self.assertTrue('_id' in g)
         self.assertTrue('name' in g)
@@ -154,94 +154,6 @@ class TestMyGenePy(unittest.TestCase):
 
         fields = self.mg.get_fields('kegg')
         self.assertTrue('pathway.kegg' in fields.keys())
-
-    def test_caching(self):
-        if not caching_avail:
-            from nose.plugins.skip import SkipTest
-            raise SkipTest
-
-        def _getgene():
-            return self.mg.getgene("1017")
-
-        def _getgenes():
-            return self.mg.getgenes(["1017", "1018"])
-
-        def _query():
-            return self.mg.query("cdk2")
-
-        def _querymany():
-            return self.mg.querymany(['1017', '695'])
-
-        def _cache_request(f):
-            current_stdout = sys.stdout
-            try:
-                out = StringIO()
-                sys.stdout = out
-                r = f()
-                output = out.getvalue().strip()
-            finally:
-                sys.stdout = current_stdout
-
-            return ('[ from cache ]' in output, r)
-
-        from_cache, pre_cache_r = _cache_request(_getgene)
-        self.assertFalse(from_cache)
-
-        self.mg.set_caching('mgc')
-
-        # populate cache
-        from_cache, cache_fill_r = _cache_request(_getgene)
-        self.assertTrue(os.path.exists('mgc.sqlite'))
-        self.assertFalse(from_cache)
-        # is it from the cache?
-        from_cache, cached_r = _cache_request(_getgene)
-        self.assertTrue(from_cache)
-
-        self.mg.stop_caching()
-        # same query should be live - not cached
-        from_cache, post_cache_r = _cache_request(_getgene)
-        self.assertFalse(from_cache)
-
-        self.mg.set_caching('mgc')
-
-        # same query should still be sourced from cache
-        from_cache, recached_r = _cache_request(_getgene)
-        self.assertTrue(from_cache)
-
-        self.mg.clear_cache()
-        # cache was cleared, same query should be live
-        from_cache, clear_cached_r = _cache_request(_getgene)
-        self.assertFalse(from_cache)
-
-        # all requests should be identical
-        self.assertTrue(all([x == pre_cache_r for x in
-            [pre_cache_r, cache_fill_r, cached_r, post_cache_r, recached_r, clear_cached_r]]))
-
-        # test getvariants POST caching
-        from_cache, first_getgenes_r = _cache_request(_getgenes)
-        self.assertFalse(from_cache)
-        # should be from cache this time
-        from_cache, second_getgenes_r = _cache_request(_getgenes)
-        self.assertTrue(from_cache)
-
-        # test query GET caching
-        from_cache, first_query_r = _cache_request(_query)
-        self.assertFalse(from_cache)
-        # should be from cache this time
-        from_cache, second_query_r = _cache_request(_query)
-        self.assertTrue(from_cache)
-
-        # test querymany POST caching
-        from_cache, first_querymany_r = _cache_request(_querymany)
-        self.assertFalse(from_cache)
-        # should be from cache this time
-        from_cache, second_querymany_r = _cache_request(_querymany)
-        self.assertTrue(from_cache)
-
-        self.mg.stop_caching()
-
-        os.remove('mgc.sqlite')
-
 
 if __name__ == '__main__':
     unittest.main()
