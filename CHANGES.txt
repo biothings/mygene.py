@@ -1,3 +1,6 @@
+v3.1.0 (2018/12/18):
+    MyGene.py client is now a thin wrapper of underlying biothings_client.py package, a universal Python client for all BioThings APIs, including MyGene.info.
+
 v3.0.0 (2016/08/10):
     Migrated to use MyGene.info v3 API (For API changes, see here: http://docs.mygene.info/en/latest/doc/migration_from_v2.html).
     Added caching functions (using requests-cache) for all query types except when using "fetch_all".  Can turn request caching on with set_caching(), off with stop_caching().  The cache can be cleared with clear_cache().
