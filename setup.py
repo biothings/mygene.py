@@ -8,7 +8,7 @@ def read(fname):
 
 setup(
     name="mygene",
-    version="3.0.0",
+    version="3.1.0",
     author="Chunlei Wu, Cyrus Afrasiabi, Sebastien Lelong",
     author_email="cwu@scripps.edu",
     description="Python Client for MyGene.Info services.",
@@ -20,11 +20,12 @@ setup(
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: BSD License",
         "Operating System :: POSIX",
@@ -37,6 +38,6 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
     install_requires=[
-        'biothings_client'
+        'biothings_client>=0.2.0'
     ],
 )
