@@ -1,4 +1,4 @@
-v3.1.0 (2018/12/18):
+v3.1.0 (2018/12/17):
     MyGene.py client is now a thin wrapper of underlying biothings_client.py package, a universal Python client for all BioThings APIs, including MyGene.info.
 
 v3.0.0 (2016/08/10):
