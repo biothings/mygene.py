@@ -45,8 +45,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MyGene.py'
-copyright = u'2016, Chunlei Wu'
+project = 'MyGene.py'
+copyright = '2016-2019, A BioThings Project.'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

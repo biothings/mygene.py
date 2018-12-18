@@ -1,31 +1,53 @@
 .. image:: https://badge.fury.io/py/mygene.svg
-    :target: https://pypi.python.org/pypi/mygene
+    :target: https://pypi.org/project/mygene/
 
 .. image:: https://img.shields.io/pypi/pyversions/mygene.svg
-    :target: https://pypi.python.org/pypi/mygene
+    :target: https://pypi.org/project/mygene/
 
 .. image:: https://img.shields.io/pypi/format/mygene.svg
-    :target: https://pypi.python.org/pypi/mygene
+    :target: https://pypi.org/project/mygene/
 
 .. image:: https://img.shields.io/pypi/status/mygene.svg
-    :target: https://pypi.python.org/pypi/mygene
+    :target: https://pypi.org/project/mygene/
 
 Intro
 =====
 
 MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene annotation data.
-It's designed with simplicity and performance emphasized. *mygene*, is an easy-to-use Python
+It's designed with simplicity and performance emphasized. ``mygene``, is an easy-to-use Python
 wrapper to access MyGene.Info_ services.
 
 .. _MyGene.Info: http://mygene.info
 .. _biothings_client: https://pypi.org/project/biothings-client/
-.. _requests: http://docs.python-requests.org/en/latest/
+.. _mygene: https://pypi.org/project/mygene/
+
+As of v3.1.0, mygene_ Python package is now a thin wrapper of underlying biothings_client_ package,
+a universal Python client for all `BioThings APIs <http://biothings.io>`_, including MyGene.info_.
+The installation of mygene_ will install biothings_client_ automatically. The following code snippets
+are essentially equivalent:
+
+
+* Continue using mygene_ package
+
+    .. code-block:: python
+
+        In [1]: import mygene
+        In [2]: mg = mygene.MyGeneInfo()
+
+* Use biothings_client_ package directly
+
+    .. code-block:: python
+
+        In [1]: from biothings_client import get_client
+        In [2]: mg = get_client('gene')
+
+After that, the use of ``mg`` instance is exactly the same, e.g. the usage examples below.
 
 Requirements
 ============
     python >=2.7 (including python3)
 
-    (Python 2.6 might still work, not it's not supported any more since v4.0.0.)
+    (Python 2.6 might still work, not it's not supported any more since v3.1.0.)
 
     biothings_client_ (>=0.2.0, install using "pip install biothings_client")
 
@@ -283,4 +305,10 @@ Usage
 
 Contact
 ========
-Drop us any feedback at: help@mygene.info or on twitter `@mygeneinfo <https://twitter.com/mygeneinfo>`_.
+Drop us any question or feedback:
+    * biothings@googlegroups.com  (public discussion)
+    * help@mygene.info (reach devs privately)
+    * `Github issues <https://github.com/biothings/mygene.info/issues>`_
+    * on twitter `@mygeneinfo <https://twitter.com/mygeneinfo>`_
+    * Post a question on `BioStars.org <https://www.biostars.org/p/new/post/?tag_val=mygene>`_ with tag #mygene.
+

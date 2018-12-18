@@ -4,22 +4,49 @@
    contain the root `toctree` directive.
 
 .. _MyGene.Info: http://mygene.info
-.. _requests: http://docs.python-requests.org/en/latest/
-
+.. _biothings_client: https://pypi.org/project/biothings-client/
+.. _mygene: https://pypi.org/project/mygene/
 
 Welcome to MyGene.py's documentation!
 =====================================
-MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene annotation data. It's designed with simplicity and performance emphasized. *mygene*, is an easy-to-use Python wrapper to access MyGene.Info_ services.
+MyGene.Info_ provides simple-to-use REST web services to query/retrieve gene annotation data. It's designed with simplicity
+and performance emphasized. *mygene*, is an easy-to-use Python wrapper to access MyGene.Info_ services.
+
+.. Note::
+    As of v3.1.0, mygene_ Python package is now a thin wrapper of underlying biothings_client_ package,
+    a universal Python client for all `BioThings APIs <http://biothings.io>`_, including MyGene.info_.
+    The installation of mygene_ will install biothings_client_ automatically. The following code snippets
+    are essentially equivalent:
+
+    * Continue using mygene_ package
+
+        .. code-block:: python
+
+            In [1]: import mygene
+            In [2]: mg = mygene.MyGeneInfo()
+
+    * Use biothings_client_ package directly
+
+        .. code-block:: python
+
+            In [1]: from biothings_client import get_client
+            In [2]: mg = get_client('gene')
+
+    After that, the use of ``mg`` instance is exactly the same.
+
 
 .. toctree::
    :maxdepth: 2
    index
 
+
 Requirements
 ============
-    python >=2.6 (including python3)
+    Python >=2.7 (including python3)
 
-    requests_ (install using "pip install requests")
+    (Python 2.6 might still work, not it's not supported any more since v3.1.0.)
+
+    biothings_client_ (>=0.2.0, install using "pip install biothings_client")
 
 Optional dependencies
 ======================
