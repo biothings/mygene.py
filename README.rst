@@ -47,7 +47,7 @@ Requirements
 ============
     python >=2.7 (including python3)
 
-    (Python 2.6 might still work, not it's not supported any more since v3.1.0.)
+    (Python 2.6 might still work, but it's not supported any more since v3.1.0.)
 
     biothings_client_ (>=0.2.0, install using "pip install biothings_client")
 
@@ -102,9 +102,12 @@ Usage
      'entrezgene': 1017,
      'name': 'cyclin-dependent kinase 2',
      'symbol': 'CDK2',
-     'taxid': 9606}
+     'taxid': 9606,
+     ...
+    }
 
-    In [4]: mg.getgene(1017, 'name,symbol,refseq')
+    # use "fields" parameter to return a subset of fields
+    In [4]: mg.getgene(1017, fields='name,symbol,refseq')
     Out[4]:
     {'_id': '1017',
      'name': 'cyclin-dependent kinase 2',
@@ -117,15 +120,15 @@ Usage
       'rna': ['NM_001798.3', 'NM_052827.2']},
      'symbol': 'CDK2'}
 
-    In [5]: mg.getgene(1017, 'name,symbol,refseq.rna')
+    In [5]: mg.getgene(1017, fields=['name', 'symbol', 'refseq.rna'])
     Out[5]:
     {'_id': '1017',
      'name': 'cyclin-dependent kinase 2',
-     'refseq': {'rna': ['NM_001798', 'NM_052827']},
+     'refseq': {'rna': ['NM_001798.5', 'NM_052827.3']},
      'symbol': 'CDK2'}
 
 
-    In [6]: mg.getgenes([1017,1018,'ENSG00000148795'])
+    In [6]: mg.getgenes([1017,1018,'ENSG00000148795'], fields='name,symbol,entrezgene,taxid')
     Out[6]:
     [{'_id': '1017',
       'entrezgene': 1017,
@@ -146,7 +149,8 @@ Usage
       'symbol': 'CYP17A1',
       'taxid': 9606}]
 
-    In [7]: mg.getgenes([1017,1018,'ENSG00000148795'], as_dataframe=True)
+    # return results in Pandas DataFrame
+    In [7]: mg.getgenes([1017,1018,'ENSG00000148795'], fields='name,symbol,entrezgene,taxid', as_dataframe=True)
     Out[7]:
                       _id  entrezgene  \
     query
