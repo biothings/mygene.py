@@ -155,5 +155,17 @@ class TestMyGenePy(unittest.TestCase):
         fields = self.mg.get_fields('kegg')
         self.assertTrue('pathway.kegg' in fields.keys())
 
+    def test_https(self):
+        origin_url = self.mg.url
+        self.mg.url = 'https://mygene.info/v3'
+        try:
+            self.test_getgene()
+            self.test_getgenes()
+            self.test_query()
+            self.test_querymany()
+        finally:
+            self.mg.url = origin_url
+
+
 if __name__ == '__main__':
     unittest.main()
