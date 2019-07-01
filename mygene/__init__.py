@@ -10,5 +10,5 @@ class MyGeneInfo(get_client('gene', instance=False)):
 
     def __init__(self):
         super(MyGeneInfo, self).__init__()
-        self.default_user_agent += ' mygene/' + __version__
+        self.default_user_agent += ' mygene.py/' + __version__
 
