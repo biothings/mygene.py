@@ -1,3 +1,6 @@
+.. image:: https://pepy.tech/badge/mygene
+    :target: https://pepy.tech/project/mygene
+
 .. image:: https://badge.fury.io/py/mygene.svg
     :target: https://pypi.org/project/mygene/
 
