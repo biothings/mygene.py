@@ -27,7 +27,7 @@ wrapper to access MyGene.Info_ services.
 .. _biothings_client: https://pypi.org/project/biothings-client/
 .. _mygene: https://pypi.org/project/mygene/
 
-As of v3.1.0, mygene_ Python package is now a thin wrapper of underlying biothings_client_ package,
+As of v3.2.0, mygene_ Python package is now a thin wrapper of underlying biothings_client_ package,
 a universal Python client for all `BioThings APIs <http://biothings.io>`_, including MyGene.info_.
 The installation of mygene_ will install biothings_client_ automatically. The following code snippets
 are essentially equivalent:
