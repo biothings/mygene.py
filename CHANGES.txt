@@ -1,3 +1,8 @@
+v3.2.1 (2021/02/25)
+    Fixed mismatched __version__ in v3.2.0
+    Updated biothings_client depenency to v0.2.5
+    Labelled python 3.9 support in setup.py
+
 v3.2.0 (2021/02/22)
     Update dependency package version to match server update. (#17)
 
