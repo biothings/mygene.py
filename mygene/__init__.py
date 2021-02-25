@@ -3,7 +3,7 @@ Python Client for MyGene.Info services
 '''
 from biothings_client import alwayslist, get_client
 
-__version__ = '3.1.0'
+__version__ = '3.2.0'
 
 
 class MyGeneInfo(get_client('gene', instance=False)):
