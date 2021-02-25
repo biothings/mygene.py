@@ -1,9 +1,11 @@
 '''
 Python Client for MyGene.Info services
 '''
+# import alwayslist helper function here in case users
+# still use "from mygene import alwayslist"
 from biothings_client import alwayslist, get_client
 
-__version__ = '3.2.0'
+__version__ = '3.2.1'
 
 
 class MyGeneInfo(get_client('gene', instance=False)):
