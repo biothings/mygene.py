@@ -1,3 +1,6 @@
+v3.2.2 (2021/04/05)
+    Updated biothings_client depenency to v0.2.6
+
 v3.2.1 (2021/02/25)
     Fixed mismatched __version__ in v3.2.0
     Updated biothings_client depenency to v0.2.5
