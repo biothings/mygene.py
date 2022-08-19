@@ -1,1 +1,1 @@
-git+git://github.com/biothings/biothings_client.py#egg=biothings_client
+git+https://github.com/biothings/biothings_client.py#egg=biothings_client
